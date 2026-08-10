@@ -1,0 +1,20 @@
+/*
+ * ============================================================
+ * Kafbat UI Layout Adjustments
+ * ============================================================
+ */
+#root {
+  padding-top: var(--dod-banner-height) !important;
+  padding-bottom: var(--dod-banner-height) !important;
+  box-sizing: border-box !important;
+}
+
+/* Kafbat fixed header */
+nav[role="navigation"][aria-label="Page Header"] {
+  top: var(--dod-banner-height) !important;
+}
+
+/* Kafbat fixed sidebar */
+#root main>div[aria-label="Sidebar"] {
+  top: calc(51px + var(--dod-banner-height)) !important;
+}

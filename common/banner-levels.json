@@ -1,0 +1,33 @@
+{
+  "levels": {
+    "UNCLASSIFIED": {
+      "text": "UNCLASSIFIED",
+      "backgroundColor": "#007A33",
+      "textColor": "#FFFFFF"
+    },
+
+    "CUI": {
+      "text": "CONTROLLED UNCLASSIFIED INFORMATION",
+      "backgroundColor": "#502B85",
+      "textColor": "#FFFFFF"
+    },
+
+    "CONFIDENTIAL": {
+      "text": "CONFIDENTIAL",
+      "backgroundColor": "#0033A0",
+      "textColor": "#FFFFFF"
+    },
+
+    "SECRET": {
+      "text": "SECRET",
+      "backgroundColor": "#C8102E",
+      "textColor": "#FFFFFF"
+    },
+
+    "TOP SECRET": {
+      "text": "TOP SECRET",
+      "backgroundColor": "#FF8C00",
+      "textColor": "#000000"
+    }
+  }
+}

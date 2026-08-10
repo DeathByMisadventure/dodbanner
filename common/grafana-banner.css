@@ -1,0 +1,20 @@
+/*
+ * ============================================================
+ * Grafana Layout Adjustments
+ * ============================================================
+ */
+
+body.app-grafana {
+  padding-top: var(--dod-banner-height);
+  padding-bottom: var(--dod-banner-height);
+}
+
+/*
+ * Shift the left navigation below the top banner.
+ * Uses Grafana's stable data-testid instead of generated CSS classes.
+ */
+body.app-grafana [data-testid="data-testid navigation mega-menu"] {
+  top: var(--dod-banner-height) !important;
+  height: calc(100% - (2 * var(--dod-banner-height))) !important;
+}
+

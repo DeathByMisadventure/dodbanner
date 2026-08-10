@@ -1,0 +1,14 @@
+/* ============================================================
+   MinIO Banner Layout
+   ============================================================ */
+
+/*
+ * MinIO uses height: 100vh on the body.
+ * The shared banner.js adds padding-top equal to the banner
+ * height, which otherwise makes the document taller than the
+ * viewport and creates an unnecessary vertical scrollbar.
+ */
+body {
+    height: calc(100vh - var(--dod-banner-height)) !important;
+    box-sizing: border-box;
+}

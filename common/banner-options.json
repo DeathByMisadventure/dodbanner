@@ -1,0 +1,9 @@
+{
+  "showTopBanner": true,
+  "showBottomBanner": true,
+  "bannerHeight": "28px",
+  "fontFamily": "Arial, Helvetica, Arial, sans-serif",
+  "fontSize": "18px",
+  "fontWeight": "bold",
+  "zIndex": 99999
+}

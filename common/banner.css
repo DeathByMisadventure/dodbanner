@@ -1,0 +1,45 @@
+/*
+ * ============================================================
+ * DoD Classification Banner - Shared Styles
+ * ============================================================
+ */
+
+:root {
+  --dod-banner-height: 28px;
+  --dod-banner-bg: #007A33;
+  --dod-banner-fg: #FFFFFF;
+  --dod-banner-font-size: 14px;
+  --dod-banner-font-weight: bold;
+  --dod-banner-zindex: 10000;
+}
+
+.dod-banner {
+  position: fixed;
+  left: 0;
+  right: 0;
+  height: var(--dod-banner-height);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  background: var(--dod-banner-bg);
+  color: var(--dod-banner-fg);
+
+  font-size: var(--dod-banner-font-size);
+  font-weight: var(--dod-banner-font-weight);
+  letter-spacing: 1px;
+  user-select: none;
+  box-sizing: border-box;
+
+  z-index: var(--dod-banner-zindex);
+}
+
+.dod-banner.top {
+  top: 0;
+}
+
+.dod-banner.bottom {
+  bottom: 0;
+}
+
