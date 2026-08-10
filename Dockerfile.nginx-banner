@@ -1,0 +1,38 @@
+ARG RUNTIME_IMAGE=nexus-registry.project1.kbstar-st.com/enterprise/framework/base/nginx:latest
+ARG CLASSIFICATION=UNCLASSIFIED
+ARG CLASSIFICATION_LABEL=CUI
+
+FROM ${RUNTIME_IMAGE}
+ARG CLASSIFICATION
+ARG CLASSIFICATION_LABEL
+
+USER root
+
+# Add Classification Banner Support
+COPY banners/common/ /usr/share/nginx/html/banner/
+COPY banners/nginx/banner.conf.template /etc/nginx/templates
+ENV PROXY_HOST="${PROXY_HOST:-127.0.0.1}"
+RUN printf '%s\n%s\n' \
+    "${CLASSIFICATION}" \
+    "${CLASSIFICATION_LABEL}" \
+    > /usr/share/nginx/html/banner/banner-classification
+
+EXPOSE 9002
+USER nginx
+
+
+# Usage:
+# grafana:
+#     # Backend application
+#     PROXY_PORT: 3000
+#     # Application index to inject into
+#     APP_INDEX: "^/(?:login)?$"
+#     INJECTION_TARGET: "</head>"
+#     INJECTION: '<script src="/banner/banner.js"></script><link rel="stylesheet" href="/banner/banner.css"><link rel="stylesheet" href="/banner/grafana-banner.css">'
+# dbgate:
+#     PROXY_PORT: 3000
+#     # Application index to inject into
+#     APP_INDEX: "^/(?:login.html)?$"
+#     # What gets injected into the application's HTML
+#     INJECTION_TARGET: "</head>"
+#     INJECTION: '<script src="banner/banner.js"></script><script src="banner/dbgate.js"></script><link rel="stylesheet" href="banner/banner.css">'
