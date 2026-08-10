@@ -1,0 +1,67 @@
+server {
+    listen ${LISTEN_PORT};
+    server_name _;
+
+    root /usr/share/nginx/html;
+
+    # ------------------------------------------------------------
+    # Shared banner assets
+    # ------------------------------------------------------------
+
+    location /banner/ {
+        try_files $uri =404;
+    }
+
+    # ------------------------------------------------------------
+    # Application HTML
+    #
+    # APP_INDEX controls which request gets banner injection.
+    # Example:
+    #   APP_INDEX=/index.html
+    #   APP_INDEX=/login
+    # ------------------------------------------------------------
+
+    location ~ ${APP_INDEX} {
+        proxy_pass http://${PROXY_HOST}:${PROXY_PORT};
+        proxy_http_version 1.1;
+        
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+
+        proxy_read_timeout 3600;
+        proxy_send_timeout 3600;
+
+        # Don't let upstream compression prevent sub_filter
+        proxy_set_header Accept-Encoding "";
+        
+        # Generic HTML injection
+        sub_filter '${INJECTION_TARGET}' '${INJECTION}';
+        sub_filter_once on;
+        sub_filter_types text/html;
+    }
+
+    # ------------------------------------------------------------
+    # Everything else -> application
+    # ------------------------------------------------------------
+
+    location / {
+        proxy_pass http://${PROXY_HOST}:${PROXY_PORT};
+        proxy_http_version 1.1;
+
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+
+        proxy_read_timeout 3600;
+        proxy_send_timeout 3600;
+    }
+}
