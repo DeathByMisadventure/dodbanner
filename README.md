@@ -24,8 +24,8 @@ The result is a standards-compliant classification banner with almost no operati
 ## How It Works
 
 1. Nginx listens on a configurable port (default `9999`).
-2. All traffic is proxied to the real application (`PROXY_HOST`:`PROXY_PORT`).
-3. When a request matches the `APP_INDEX` regular expression (the main HTML page / login page / SPA entry point), Nginx uses `sub_filter` to inject a `<script>` and `<link>` into the HTML (by default right before `</head>`).
+2. All traffic is proxied to the real application (`BACKEND_HOST`:`BACKEND_PORT`).
+3. When a request matches the `INJECT_PATH_REGEX` regular expression (the main HTML page / login page / SPA entry point), Nginx uses `sub_filter` to inject a `<script>` and `<link>` into the HTML (by default right before `</head>`).
 4. The injected `banner.js` fetches:
    - Current classification + caveats (`banner-classification`)
    - Color/style definitions (`banner-levels.json`)
@@ -51,10 +51,10 @@ docker build -f Dockerfile.nginx-banner -t dodbanner:latest .
 docker run -d \
   --name dodbanner \
   -p 9999:9999 \
-  -e PROXY_HOST=my-app \
-  -e PROXY_PORT=3000 \
+  -e BACKEND_HOST=my-app \
+  -e BACKEND_PORT=3000 \
   -e LISTEN_PORT=9999 \
-  -e APP_INDEX='^/(?:index.html)?$' \
+  -e INJECT_PATH_REGEX='^/(?:index.html)?$' \
   dodbanner:latest
 ```
 
@@ -66,14 +66,15 @@ Point users at `http://your-host:9999` instead of the original application port.
 
 All configuration is done via environment variables (substituted into the Nginx template at container start).
 
-| Variable            | Default                          | Description |
-|---------------------|----------------------------------|-------------|
-| `PROXY_HOST`        | `127.0.0.1`                      | Upstream application hostname or container name |
-| `PROXY_PORT`        | `8080`                           | Upstream application port |
-| `LISTEN_PORT`       | `9999`                           | Port the banner proxy listens on |
-| `APP_INDEX`         | `^/(?:index.html)?$`             | **Regex** that matches the HTML page(s) that should receive the banner injection |
-| `INJECTION_TARGET`  | `</head>`                        | String that `sub_filter` looks for |
-| `INJECTION`         | `<script src="/banner/banner.js"></script><link rel="stylesheet" href="/banner/banner.css">` | Exact HTML snippet that is injected |
+| Variable | Default | Description |
+| --------------------- | ---------------------------------- | ------------- |
+| `BACKEND_HOST` | `127.0.0.1` | Upstream application hostname or container name |
+| `BACKEND_PORT` | `8080` | Upstream application port |
+| `LISTEN_PORT` | `9999` | Port the banner proxy listens on |
+| `INJECT_PATH_REGEX` | `^/(?:index.html)?$` | **Regex** that matches the HTML page(s) that should receive the banner injection |
+| `INJECT_BEFORE` | `</head>` | String that `sub_filter` looks for |
+| `INJECT_CSS` | `` | Name of application specific CSS override |
+| `INJECT_JS` | `` | Name of application specific JS override |
 
 ### Build-time arguments (Dockerfile)
 
@@ -143,93 +144,10 @@ Controls layout and styling:
 
 ---
 
-## Application-Specific Examples
-
-The repository already contains tuned injection snippets and layout helpers for several common tools.
-
-### Grafana
-
-```yaml
-environment:
-  PROXY_PORT: "3000"
-  APP_INDEX: "^/(?:login)?$"
-  INJECTION_TARGET: "</head>"
-  INJECTION: >
-    <script src="/banner/banner.js"></script>
-    <link rel="stylesheet" href="/banner/banner.css">
-    <link rel="stylesheet" href="/banner/grafana-banner.css">
-```
-
-`grafana-banner.css` adds padding and shifts the mega-menu so it sits below the top banner.
-
-### DbGate
-
-```yaml
-environment:
-  PROXY_PORT: "3000"
-  APP_INDEX: "^/(?:login.html)?$"
-  INJECTION: >
-    <script src="/banner/banner.js"></script>
-    <script src="/banner/dbgate-banner.js"></script>
-    <link rel="stylesheet" href="/banner/banner.css">
-```
-
-`dbgate-banner.js` dynamically adjusts `--dim-header-top` and `--dim-statusbar-height` CSS variables so the UI respects both banners.
-
-### MinIO Console
-
-```yaml
-environment:
-  PROXY_PORT: "9001"
-  APP_INDEX: "^/(?:)$"
-  INJECTION: >
-    <script src="/banner/banner.js"></script>
-    <link rel="stylesheet" href="/banner/banner.css">
-    <link rel="stylesheet" href="/banner/minio-banner.css">
-```
-
-### Kafbat / Kafka UI
-
-```yaml
-environment:
-  PROXY_PORT: "8080"
-  APP_INDEX: "^/(?!api|actuator|static|assets|.*\\.(js|css|png|jpg|svg|ico|woff2?)$).*$"
-  INJECTION: >
-        <script src="/banner/banner.js"></script>
-        <link rel="stylesheet" href="/banner/banner.css">
-        <link rel="stylesheet" href="/banner/kafbat-banner.css">
-```
-
-### Pgadmin
-
-```yaml
-environment:
-  PROXY_PORT: "80"
-  APP_INDEX: "^/(?:browser)?/?$"
-  INJECTION: >
-        <script src="/banner/banner.js"></script>
-        <link rel="stylesheet" href="/banner/banner.css">
-        <link rel="stylesheet" href="/banner/pgadmin-banner.css">
-```
-
-### SonarQube
-
-```yaml
-environment:
-  PROXY_PORT: "9000"
-  APP_INDEX: "^/(?!api|static|css|js|images|favicon|.*\\.(js|css|png|jpg|svg|ico|woff2?)$).*$"
-  INJECTION: >
-        <script src="/banner/banner.js"></script>
-        <link rel="stylesheet" href="/banner/banner.css">
-        <link rel="stylesheet" href="/banner/sonarqube-banner.css">
-```
-
----
-
 ## Customizing for a New Application
 
 1. Identify the HTML entry point (usually `/`, `/index.html`, `/login`, etc.).
-2. Set `APP_INDEX` to a regex that matches only that page (or pages).
+2. Set `INJECT_PATH_REGEX` to a regex that matches only that page (or pages).
 3. Decide where to inject (`</head>` is almost always correct).
 4. If the application uses fixed headers/sidebars or `100vh` layouts, create a small CSS or JS helper (copy the pattern from the existing `*-banner.css` / `*-banner.js` files).
 5. Mount the helper into `/usr/share/nginx/html/banner/` or rebuild the image.
@@ -237,8 +155,7 @@ environment:
 Example for a generic SPA:
 
 ```bash
--e APP_INDEX='^/(?:index\.html)?$'
--e INJECTION='<script src="/banner/banner.js"></script><link rel="stylesheet" href="/banner/banner.css">'
+-e INJECT_PATH_REGEX='^/(?:index\.html)?$'
 ```
 
 ---
@@ -280,3 +197,147 @@ nginx/
 To add a new classification color or change the default height, edit the JSON files and rebuild (or mount them at runtime).
 
 ---
+
+## Kubernetes Sidecar Pattern
+
+The most common production deployment is to run `dodbanner` as a **sidecar** next to the application container in the same Pod.
+
+- The application container continues to listen on its normal port (e.g. `8080`).
+- The `dodbanner` sidecar listens on `9999` and proxies to the application on `localhost`.
+- The Kubernetes **Service** points at the sidecar port (`9999`), so all external traffic goes through the banner proxy.
+
+### Example Deployment
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: my-app
+  template:
+    metadata:
+      labels:
+        app: my-app
+    spec:
+      containers:
+        # -------------------------------------------------
+        # Main application container
+        # -------------------------------------------------
+        - name: app
+          image: my-app:latest
+          ports:
+            - containerPort: 8080
+              name: http
+
+        # -------------------------------------------------
+        # DoD Banner Injection sidecar
+        # -------------------------------------------------
+        - name: dodbanner
+          image: dodbanner:latest
+          ports:
+            - containerPort: 9999
+              name: banner
+          env:
+            - name: BACKEND_PORT
+              value: "8080"
+            - name: INJECT_PATH_REGEX
+              value: "^/(?:index.html)?$"
+            - name: INJECT_BEFORE
+              value: "</head>"
+              # Typically use either custom CSS or JS
+            - name: INJECT_CSS
+              value: appname-banner.css
+            - name: INJECT_JS
+              value: appname-banner.js
+          # Optional: resource limits
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 200m
+              memory: 128Mi
+```
+
+### Application-specific examples
+
+#### Grafana
+
+```yaml
+- name: BACKEND_PORT
+  value: "3000"
+- name: INJECT_PATH_REGEX
+  value: "^/(?:login)?$"
+- name: INJECT_CSS
+  value: "grafana-banner.css"
+```
+
+### DBGate
+
+```yaml
+- name: BACKEND_PORT
+  value: "3000"
+- name: INJECT_PATH_REGEX
+  value: "^/(?:login.html)?$"
+- name: INJECT_JS
+  value: "dbgate-banner.js"
+```
+
+### MinIO
+
+```yaml
+- name: BACKEND_PORT
+  value: "9001"
+- name: INJECT_PATH_REGEX
+  value: "^/(?:)$"
+- name: INJECT_CSS
+  value: "minio-banner.css"
+```
+
+### Kafbat / KafkaUI
+
+```yaml
+- name: BACKEND_PORT
+  value: "8080"
+- name: INJECT_PATH_REGEX
+  value: "^/(?!api|actuator|static|assets|.*\\.(js|css|png|jpg|svg|ico|woff2?)$$   ).*   $$"
+- name: INJECT_CSS
+  value: "kafbat-banner.css"
+```
+
+### Pgadmim
+
+```yaml
+- name: BACKEND_PORT
+  value: "80"
+- name: INJECT_PATH_REGEX
+  value: "^/(?:browser)?/?$"
+- name: INJECT_CSS
+  value: "pgadmin-banner.css"
+```
+
+#### Nexus
+
+```yaml
+- name: BACKEND_PORT
+  value: "8081"
+- name: INJECT_PATH_REGEX
+  value: "^/(?!service|repository|v1|static|favicon|.*\\.(js|css|png|jpg|svg|ico|woff2?)$$   ).*   $$"
+- name: INJECT_CSS
+  value: "nexus-banner.css"
+```
+
+#### SonarQube
+
+```yaml
+- name: BACKEND_PORT
+  value: "9000"
+- name: INJECT_PATH_REGEX
+  value: "^/(?!api|static|css|js|images|favicon|.*\\.(js|css|png|jpg|svg|ico|woff2?)$$   ).*   $$"
+- name: INJECT_CSS
+  value: "sonarqube-banner.css"
+```

@@ -1,0 +1,67 @@
+#!/bin/sh
+set -e
+
+ME=$(basename "$0")
+
+entrypoint_log() {
+    if [ -z "${NGINX_ENTRYPOINT_QUIET_LOGS:-}" ]; then
+        echo "$ME: $*"
+    fi
+}
+
+# ------------------------------------------------------------
+# Defaults
+# ------------------------------------------------------------
+: "${UPSTREAM_HOST:=127.0.0.1}"
+: "${UPSTREAM_PORT:=8080}"
+: "${LISTEN_PORT:=9999}"
+: "${INJECT_PATH_REGEX:=^/(?:index.html)?$}"
+: "${INJECT_BEFORE:=</head>}"
+
+# Always inject the core banner files
+CORE_INJECTION='<script src="/banner/banner.js"></script><link rel="stylesheet" href="/banner/banner.css">'
+
+# ------------------------------------------------------------
+# Build EXTRA_INJECTION from INJECT_JS and INJECT_CSS
+# ------------------------------------------------------------
+EXTRA_INJECTION=""
+
+# Helper: turn a space- or comma-separated list into <script> / <link> tags
+build_tags() {
+    type="$1"          # "js" or "css"
+    raw="$2"
+
+    [ -z "$raw" ] && return
+
+    # Allow both comma and space separated values
+    echo "$raw" | tr ', ' '\n' | while read -r item; do
+        item=$(echo "$item" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
+        [ -z "$item" ] && continue
+
+        # If the user only gave a filename, prefix with /banner/
+        case "$item" in
+            /*) path="$item" ;;
+            *)  path="/banner/$item" ;;
+        esac
+
+        if [ "$type" = "js" ]; then
+            echo "<script src=\"${path}\"></script>"
+        else
+            echo "<link rel=\"stylesheet\" href=\"${path}\">"
+        fi
+    done
+}
+
+EXTRA_JS=$(build_tags js "${INJECT_JS:-}")
+EXTRA_CSS=$(build_tags css "${INJECT_CSS:-}")
+
+EXTRA_INJECTION="${EXTRA_JS}${EXTRA_CSS}"
+
+# Export so envsubst can see them
+export CORE_INJECTION
+export EXTRA_INJECTION
+export UPSTREAM_HOST UPSTREAM_PORT LISTEN_PORT
+export INJECT_PATH_REGEX INJECT_BEFORE
+
+entrypoint_log "CORE_INJECTION  = $CORE_INJECTION"
+entrypoint_log "EXTRA_INJECTION = $EXTRA_INJECTION"

@@ -32,12 +32,11 @@ RUN dnf install -y --setopt=install_weak_deps=False \
     mkdir -p /var/cache/nginx && \
     chown -R nginx:nginx /var/cache/nginx
 
-ENV PROXY_HOST="127.0.0.1"
-ENV PROXY_PORT="8080"
+ENV BACKEND_HOST="127.0.0.1"
+ENV BACKEND_PORT="8080"
 ENV LISTEN_PORT="9999"
-ENV APP_INDEX="^/(?:index.html)?$"
-ENV INJECTION_TARGET="</head>"
-ENV INJECTION='<script src="/banner/banner.js"></script><link rel="stylesheet" href="/banner/banner.css">'
+ENV INJECT_PATH_REGEX="^/(?:index.html)?$"
+ENV INJECT_BEFORE="</head>"
 
 RUN printf '%s\n%s\n' \
     "${CLASSIFICATION}" \
@@ -53,15 +52,15 @@ CMD ["nginx", "-g", "daemon off;"]
 # Usage:
 # grafana:
 #     # Backend application
-#     PROXY_PORT: 3000
+#     BACKEND_PORT: 3000
 #     # Application index to inject into
-#     APP_INDEX: "^/(?:login)?$"
-#     INJECTION_TARGET: "</head>"
+#     INJECT_PATH_REGEX: "^/(?:login)?$"
+#     INJECT_BEFORE: "</head>"
 #     INJECTION: '<script src="/banner/banner.js"></script><link rel="stylesheet" href="/banner/banner.css"><link rel="stylesheet" href="/banner/grafana-banner.css">'
 # dbgate:
-#     PROXY_PORT: 3000
+#     BACKEND_PORT: 3000
 #     # Application index to inject into
-#     APP_INDEX: "^/(?:login.html)?$"
+#     INJECT_PATH_REGEX: "^/(?:login.html)?$"
 #     # What gets injected into the application's HTML
-#     INJECTION_TARGET: "</head>"
+#     INJECT_BEFORE: "</head>"
 #     INJECTION: '<script src="banner/banner.js"></script><script src="banner/dbgate.js"></script><link rel="stylesheet" href="banner/banner.css">'
