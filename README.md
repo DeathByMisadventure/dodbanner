@@ -10,7 +10,7 @@ Ideal for air-gapped, classified, or CUI environments where every web UI must di
 
 Many DoD and federal systems require a persistent visual classification banner on every page of every web application. Most commercial or open-source tools (Grafana, MinIO, DbGate, Kafka UI, etc.) do not provide this out of the box.
 
-`dodbanner` solves this by sitting in front of the application as a transparent reverse proxy. It:
+`DoD Banner` solves this by sitting in front of the application as a transparent reverse proxy. It:
 
 - Serves the original application unchanged for all non-HTML requests
 - Intercepts the main HTML entry point(s)

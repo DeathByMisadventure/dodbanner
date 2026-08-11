@@ -46,18 +46,16 @@ services:
     ports:
       - "9999:9999"
     environment:
-      PROXY_HOST: sonarqube
-      PROXY_PORT: "9000"
+      BACKEND_HOST: sonarqube
+      BACKEND_PORT: "9000"
       LISTEN_PORT: "9999"
 
       # SonarQube is mostly a SPA after login
-      APP_INDEX: "^/(?!api|static|css|js|images|favicon|.*\\.(js|css|png|jpg|svg|ico|woff2?)$).*$"
+      INJECT_PATH_REGEX: "^/(?!api|static|css|js|images|favicon|.*\\.(js|css|png|jpg|svg|ico|woff2?)$).*$"
 
-      INJECTION_TARGET: "</head>"
-      INJECTION: >-
-        <script src="/banner/banner.js"></script>
-        <link rel="stylesheet" href="/banner/banner.css">
-        <link rel="stylesheet" href="/banner/sonarqube-banner.css">
+      INJECT_BEFORE: "</head>"
+      INJECT_CSS: "sonarqube-banner.css"
+
     depends_on:
       - sonarqube
 
