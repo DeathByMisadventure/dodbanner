@@ -1,41 +1,33 @@
 services:
+# -------------------------------------------------
+  # PostgreSQL (optional but useful)
   # -------------------------------------------------
-  # PostgreSQL for SonarQube
-  # -------------------------------------------------
-  db:
-    image: postgres:16
+  postgres:
+    image: postgres:17
     restart: unless-stopped
     environment:
-      POSTGRES_USER: sonar
-      POSTGRES_PASSWORD: sonar
-      POSTGRES_DB: sonar
-    volumes:
-      - sonar-db:/var/lib/postgresql/data
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: demo
+    # Not exposed to host – only visible to pgAdmin
 
   # -------------------------------------------------
-  # SonarQube
+  # pgAdmin
   # -------------------------------------------------
-  sonarqube:
-    image: sonarqube:community
+  pgadmin:
+    image: dpage/pgadmin4:latest
     restart: unless-stopped
-    depends_on:
-      - db
     environment:
-      SONAR_JDBC_URL: jdbc:postgresql://db:5432/sonar
-      SONAR_JDBC_USERNAME: sonar
-      SONAR_JDBC_PASSWORD: sonar
-    volumes:
-      - sonar-data:/opt/sonarqube/data
-      - sonar-extensions:/opt/sonarqube/extensions
-      - sonar-logs:/opt/sonarqube/logs
-    # Only expose internally
+      PGADMIN_DEFAULT_EMAIL: admin@example.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+      # Optional: make it a bit less annoying for testing
+      PGADMIN_CONFIG_SERVER_MODE: "False"
+      PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: "False"
+    # Only exposed internally
     expose:
-      - "9000"
-    # SonarQube needs a bit more memory
-    ulimits:
-      nofile:
-        soft: 65536
-        hard: 65536
+      - "80"
+    depends_on:
+      - postgres
 
   # -------------------------------------------------
   # DoD Banner Injection Proxy
@@ -46,22 +38,11 @@ services:
     ports:
       - "9999:9999"
     environment:
-      BACKEND_HOST: sonarqube
-      BACKEND_PORT: "9000"
+      BACKEND_HOST: pgadmin
+      BACKEND_PORT: "80"
       LISTEN_PORT: "9999"
-
-      # SonarQube is mostly a SPA after login
-      INJECT_PATH_REGEX: "^/(?!api|static|css|js|images|favicon|.*\\.(js|css|png|jpg|svg|ico|woff2?)$).*$"
-
+      INJECT_PATH_REGEX: "^/(?:browser)?/?$"
       INJECT_BEFORE: "</head>"
-      INJECT_CSS: "sonarqube-banner.css"
-      CLASSIFICATION: "SECRET"
-      CLASSIFICATION_LABEL: "NOFORN"
-    depends_on:
-      - sonarqube
-
-volumes:
-  sonar-db:
-  sonar-data:
-  sonar-extensions:
-  sonar-logs:
+      INJECT_CSS: "pgadmin-banner.css"
+      CLASSIFICATION: "UNCLASSIFIED"
+      CLASSIFICATION_LABEL: "SMEG"

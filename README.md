@@ -48,21 +48,19 @@ The result is a standards-compliant classification banner with almost no operati
 The proxy is completely transparent to the application. No cookies, no session changes, no backend modifications.
 
 ```mermaid
-flowchart TB
-    ENV["Environment Variables<br/>CLASSIFICATION<br/>CLASSIFICATION_LABEL"]
+flowchart LR
+    E["Environment Variables<br/>CLASSIFICATION<br/>CLASSIFICATION_LABEL"]
+    S["Entrypoint"]
+    F["banner-classification"]
+    J["banner.js"]
+    L["banner-levels.json"]
+    B["Rendered Banner"]
 
-    ENTRY["docker-entrypoint.sh"]
-
-    FILE["banner-classification"]
-
-    NGINX["Nginx"]
-
-    APP["Application"]
-
-    ENV --> ENTRY
-    ENTRY --> FILE
-    ENTRY --> NGINX
-    NGINX --> APP
+    E --> S
+    S --> F
+    F --> J
+    L --> J
+    J --> B
 ```
 
 ## Response compression
