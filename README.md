@@ -111,7 +111,7 @@ All configuration is done via environment variables (substituted into the Nginx 
 | `INJECT_CSS` | `` | Name of application specific CSS override |
 | `INJECT_JS` | `` | Name of application specific JS override |
 | `CLASSIFICATION` | `UNAVAILABLE` | Classification Level |
-| `CLASSIFICATION_LABEL` | `` | Classification Label |
+| `CLASSIFICATION_LABEL` | `` | Optional caveat/dissemination control |
 
 ### Build-time arguments (Dockerfile)
 
@@ -358,7 +358,7 @@ spec:
 - name: BACKEND_PORT
   value: "8080"
 - name: INJECT_PATH_REGEX
-  value: "^/(?!api|actuator|static|assets|.*\\.(js|css|png|jpg|svg|ico|woff2?)$$).*$$"
+  value: "^/(?!api|actuator|static|assets|.*\\.(js|css|png|jpg|svg|ico|woff2?)$).*"
 - name: INJECT_CSS
   value: "kafbat-banner.css"
 ```
@@ -380,7 +380,7 @@ spec:
 - name: BACKEND_PORT
   value: "8081"
 - name: INJECT_PATH_REGEX
-  value: "^/(?!service|repository|v1|static|favicon|.*\\.(js|css|png|jpg|svg|ico|woff2?)$$).*   $$"
+  value: "^/(?!service|repository|v1|static|favicon|.*\\.(js|css|png|jpg|svg|ico|woff2?)$).*"
 - name: INJECT_CSS
   value: "nexus-banner.css"
 ```
@@ -391,7 +391,7 @@ spec:
 - name: BACKEND_PORT
   value: "9000"
 - name: INJECT_PATH_REGEX
-  value: "^/(?!api|static|css|js|images|favicon|.*\\.(js|css|png|jpg|svg|ico|woff2?)$$).*   $$"
+  value: "^/(?!api|static|css|js|images|favicon|.*\\.(js|css|png|jpg|svg|ico|woff2?)$).*"
 - name: INJECT_CSS
   value: "sonarqube-banner.css"
 ```
