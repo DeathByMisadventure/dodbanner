@@ -1,0 +1,15 @@
+/*
+ * ============================================================
+ * Nexus Repository Manager – DoD Banner Layout Adjustments
+ * ============================================================
+ */
+
+/* The main page grid uses 100vh and overflow:hidden.
+   Shrink it so the top + bottom banners have room. */
+.nxrm-page {
+  height: calc(100vh - (2 * var(--dod-banner-height))) !important;
+  /* Optional: push the whole grid down so it sits cleanly
+     between the two banners */
+  margin-top: var(--dod-banner-height) !important;
+  box-sizing: border-box;
+}

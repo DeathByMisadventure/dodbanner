@@ -8,7 +8,7 @@ server {
     # Shared banner assets
     # ------------------------------------------------------------
 
-    location /banner/ {
+    location ^~ /banner/ {
         try_files $uri =404;
     }
 

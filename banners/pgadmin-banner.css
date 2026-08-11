@@ -1,0 +1,17 @@
+/*
+ * ============================================================
+ * pgAdmin Layout Adjustments for DoD Banner
+ * ============================================================
+ */
+
+/* Reduce the usable viewport height so content isn't hidden
+   behind the bottom banner */
+body {
+  height: calc(100vh - var(--dod-banner-height)) !important;
+  box-sizing: border-box;
+}
+
+/* Also adjust the main React root if needed */
+#root {
+  height: 100% !important;
+}
