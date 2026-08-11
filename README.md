@@ -47,6 +47,18 @@ The result is a standards-compliant classification banner with almost no operati
 
 The proxy is completely transparent to the application. No cookies, no session changes, no backend modifications.
 
+```mermaid
+flowchart LR
+    B[Browser] -->|Request| P[dodbanner<br/>Nginx Reverse Proxy]
+
+    P -->|Request| A[Application]
+    A -->|HTML response| P
+
+    P -->|Inject banner| B
+
+    P -->|Classification| C[(Classification<br/>Configuration)]
+```
+
 ## Response compression
 
 DoD Banner disables upstream HTTP response compression for requests that may be modified because Nginx sub_filter must operate on uncompressed HTML. This is generally insignificant for HTML entry points but may affect large HTML responses.
@@ -222,6 +234,22 @@ The most common production deployment is to run `dodbanner` as a **sidecar** nex
 - The application container continues to listen on its normal port (e.g. `8080`).
 - The `dodbanner` sidecar listens on `9999` and proxies to the application on `localhost`.
 - The Kubernetes **Service** points at the sidecar port (`9999`), so all external traffic goes through the banner proxy.
+
+```mermaid
+flowchart TB
+    B[Browser] --> S[Kubernetes Service]
+
+    subgraph POD[Application Pod]
+        P[dodbanner<br/>:9999]
+        A[Application<br/>:8080]
+
+        P --> A
+    end
+
+    S --> P
+
+    C[(Classification<br/>ConfigMap / File)] --> P
+```
 
 ### Example Deployment
 
