@@ -48,15 +48,21 @@ The result is a standards-compliant classification banner with almost no operati
 The proxy is completely transparent to the application. No cookies, no session changes, no backend modifications.
 
 ```mermaid
-flowchart LR
-    B[Browser] -->|Request| P[dodbanner<br/>Nginx Reverse Proxy]
+flowchart TB
+    ENV["Environment Variables<br/>CLASSIFICATION<br/>CLASSIFICATION_LABEL"]
 
-    P -->|Request| A[Application]
-    A -->|HTML response| P
+    ENTRY["docker-entrypoint.sh"]
 
-    P -->|Inject banner| B
+    FILE["banner-classification"]
 
-    P -->|Classification| C[(Classification<br/>Configuration)]
+    NGINX["Nginx"]
+
+    APP["Application"]
+
+    ENV --> ENTRY
+    ENTRY --> FILE
+    ENTRY --> NGINX
+    NGINX --> APP
 ```
 
 ## Response compression
