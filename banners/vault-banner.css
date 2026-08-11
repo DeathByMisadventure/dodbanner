@@ -1,0 +1,23 @@
+/*
+ * ============================================================
+ * HashiCorp Vault Layout Adjustments
+ * ============================================================
+ */
+
+/*
+ * Account for the fixed top and bottom DoD banners.
+ */
+body.ember-application {
+  padding-top: var(--dod-banner-height);
+  padding-bottom: var(--dod-banner-height);
+}
+
+/*
+ * Vault's application frame explicitly uses 100vh, which causes
+ * it to extend underneath the fixed banners.
+ *
+ * Reduce the frame's viewport height to account for both banners.
+ */
+body.ember-application .hds-app-frame {
+  min-height: calc(100vh - (2 * var(--dod-banner-height)));
+}

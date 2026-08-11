@@ -1,48 +1,65 @@
 services:
-# -------------------------------------------------
-  # PostgreSQL (optional but useful)
-  # -------------------------------------------------
-  postgres:
-    image: postgres:17
-    restart: unless-stopped
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: demo
-    # Not exposed to host – only visible to pgAdmin
 
   # -------------------------------------------------
-  # pgAdmin
+  # HashiCorp Vault
   # -------------------------------------------------
-  pgadmin:
-    image: dpage/pgadmin4:latest
+  #
+  # Development-only Vault instance.
+  # The UI/API are NOT exposed directly to the host.
+  #
+  vault:
+    image: hashicorp/vault:2.0.3
     restart: unless-stopped
+    command: server -dev -dev-root-token-id root -dev-listen-address=0.0.0.0:8200
     environment:
-      PGADMIN_DEFAULT_EMAIL: admin@example.com
-      PGADMIN_DEFAULT_PASSWORD: admin
-      # Optional: make it a bit less annoying for testing
-      PGADMIN_CONFIG_SERVER_MODE: "False"
-      PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: "False"
-    # Only exposed internally
+      VAULT_DEV_ROOT_TOKEN_ID: root
     expose:
-      - "80"
-    depends_on:
-      - postgres
+      - "8200"
+
 
   # -------------------------------------------------
   # DoD Banner Injection Proxy
   # -------------------------------------------------
+
   dodbanner:
     image: dodbanner:latest
     restart: unless-stopped
     ports:
       - "9999:9999"
     environment:
-      BACKEND_HOST: pgadmin
-      BACKEND_PORT: "80"
+      BACKEND_HOST: vault
+      BACKEND_PORT: "8200"
       LISTEN_PORT: "9999"
-      INJECT_PATH_REGEX: "^/(?:browser)?/?$"
+
+      # Vault's UI is served from /ui.
+      # Only modify the HTML entry point; don't touch
+      # JavaScript, CSS, API, or static asset requests.
+      INJECT_PATH_REGEX: "^/ui/.*$"
       INJECT_BEFORE: "</head>"
-      INJECT_CSS: "pgadmin-banner.css"
-      CLASSIFICATION: "UNCLASSIFIED"
-      CLASSIFICATION_LABEL: "SMEG"
+
+      # Application-specific customization.
+      INJECT_CSS: "vault-banner.css"
+
+      CLASSIFICATION: "SECRET"
+      CLASSIFICATION_LABEL: "NOFORN"
+
+    depends_on:
+      - vault
+
+  # # -------------------------------------------------
+  # # DoD Banner Injection Proxy
+  # # -------------------------------------------------
+  # dodbanner:
+  #   image: dodbanner:latest
+  #   restart: unless-stopped
+  #   ports:
+  #     - "9999:9999"
+  #   environment:
+  #     BACKEND_HOST: pgadmin
+  #     BACKEND_PORT: "80"
+  #     LISTEN_PORT: "9999"
+  #     INJECT_PATH_REGEX: "^/(?:browser)?/?$"
+  #     INJECT_BEFORE: "</head>"
+  #     INJECT_CSS: "pgadmin-banner.css"
+  #     CLASSIFICATION: "UNCLASSIFIED"
+  #     CLASSIFICATION_LABEL: "SMEG"

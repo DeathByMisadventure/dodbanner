@@ -393,3 +393,14 @@ spec:
 - name: INJECT_CSS
   value: "sonarqube-banner.css"
 ```
+
+#### Hashicorp Vault
+
+```yaml
+- name: BACKEND_PORT
+  value: "8200"
+- name: INJECT_PATH_REGEX
+  value: "^/ui/.*$"
+- name: INJECT_CSS
+  value: "vault-banner.css"
+```
