@@ -49,7 +49,7 @@
       });
       if (!r.ok) {
         return {
-          classification: "UNCLASSIFIED",
+          classification: "UNAVAILABLE",
           caveat: ""
         };
       }
@@ -58,12 +58,12 @@
         .map(l => l.trim())
         .filter(Boolean);
       return {
-        classification: (lines[0] || "UNCLASSIFIED").toUpperCase(),
+        classification: (lines[0] || "UNAVAILABLE").toUpperCase(),
         caveat: lines.slice(1).join(" // ")
       };
     } catch {
       return {
-        classification: "UNCLASSIFIED",
+        classification: "UNAVAILABLE",
         caveat: ""
       };
     }
@@ -82,7 +82,7 @@
   const levels = levelsFile.levels ?? defaultLevels;
   const level =
     levels[classification.classification] ??
-    defaultLevels.UNCLASSIFIED;
+    defaultLevels.UNAVAILABLE;
 
   // Expose configuration to CSS
   document.documentElement.style.setProperty(

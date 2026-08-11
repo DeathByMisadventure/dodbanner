@@ -55,7 +55,8 @@ services:
 
       INJECT_BEFORE: "</head>"
       INJECT_CSS: "sonarqube-banner.css"
-
+      CLASSIFICATION: "SECRET"
+      CLASSIFICATION_LABEL: "NOFORN"
     depends_on:
       - sonarqube
 

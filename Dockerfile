@@ -1,13 +1,9 @@
 ARG RUNTIME_IMAGE=quay.io/hummingbird/nginx:latest-builder
-ARG CLASSIFICATION="CLASSIFICATION UNAVAILABLE"
-ARG CLASSIFICATION_LABEL=
+
 
 FROM ${RUNTIME_IMAGE}
-ARG CLASSIFICATION
-ARG CLASSIFICATION_LABEL
 
-LABEL org.opencontainers.image.title="DoD Classification Banner Injection" \
-      classification="${CLASSIFICATION}"
+LABEL org.opencontainers.image.title="DoD Classification Banner Injection"
 
 USER root
 
@@ -30,18 +26,17 @@ RUN dnf install -y --setopt=install_weak_deps=False \
     cp /etc/nginx/mime.types.default /etc/nginx/mime.types && \
     chown -R nginx:nginx /etc/nginx/ && \
     mkdir -p /var/cache/nginx && \
-    chown -R nginx:nginx /var/cache/nginx
+    chown -R nginx:nginx /var/cache/nginx && \
+    chown nginx:nginx /usr/share/nginx/html/banner/banner-classification
+
 
 ENV BACKEND_HOST="127.0.0.1"
 ENV BACKEND_PORT="8080"
 ENV LISTEN_PORT="9999"
 ENV INJECT_PATH_REGEX="^/(?:index.html)?$"
 ENV INJECT_BEFORE="</head>"
-
-RUN printf '%s\n%s\n' \
-    "${CLASSIFICATION}" \
-    "${CLASSIFICATION_LABEL}" \
-    > /usr/share/nginx/html/banner/banner-classification
+ENV CLASSIFICATION="UNAVAILABLE"
+ENV CLASSIFICATION_LABEL=""
 
 USER nginx
 EXPOSE 9999

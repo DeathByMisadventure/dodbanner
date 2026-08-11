@@ -83,6 +83,7 @@ docker run -d \
   -e BACKEND_PORT=3000 \
   -e LISTEN_PORT=9999 \
   -e INJECT_PATH_REGEX='^/(?:index.html)?$' \
+  -e CLASSIFICATION="UNCLASSIFIED" \
   dodbanner:latest
 ```
 
@@ -103,16 +104,14 @@ All configuration is done via environment variables (substituted into the Nginx 
 | `INJECT_BEFORE` | `</head>` | String that `sub_filter` looks for |
 | `INJECT_CSS` | `` | Name of application specific CSS override |
 | `INJECT_JS` | `` | Name of application specific JS override |
+| `CLASSIFICATION` | `UNAVAILABLE` | Classification Level |
+| `CLASSIFICATION_LABEL` | `` | Classification Label |
 
 ### Build-time arguments (Dockerfile)
 
 | ARG                   | Default        | Description |
 |-----------------------|----------------|-------------|
 | `RUNTIME_IMAGE`       | `quay.io/hummingbird/nginx:latest-builder` | Base image |
-| `CLASSIFICATION`      | `UNCLASSIFIED` | Written into `/usr/share/nginx/html/banner/banner-classification` |
-| `CLASSIFICATION_LABEL`| `CUI`          | Optional second line (caveat / dissemination control) |
-
-You can override classification at runtime by mounting a file over `/usr/share/nginx/html/banner/banner-classification`.
 
 ---
 
@@ -141,13 +140,13 @@ Defines colors and display text for each classification:
       "textColor": "#FFFFFF"
     },
     "CUI": {
-      "text": "CONTROLLED UNCLASSIFIED INFORMATION",
+      "text": "CUI",
       "backgroundColor": "#502B85",
       "textColor": "#FFFFFF"
     },
     "CONFIDENTIAL": { ... },
     "SECRET": { ... },
-    "TOP SECRET": { ... }
+    "TOPSECRET": { ... }
   }
 }
 ```
@@ -194,7 +193,6 @@ Example for a generic SPA:
 - Banner assets are served from `/banner/` (static files inside the container).
 - Runs as non-root user `nginx`.
 - Compatible with Red Hat Hummingbird / UBI-based images and standard Alpine/Debian Nginx images (with minor adjustments).
-- The second Dockerfile (`Dockerfile.nginx`) is a hardened, multi-stage “secure Nginx” base that can be used as the foundation for the banner image.
 
 ---
 
@@ -271,6 +269,7 @@ spec:
       containers:
         # -------------------------------------------------
         # Main application container
+        # Health checks still directly hit the container port
         # -------------------------------------------------
         - name: app
           image: my-app:latest
@@ -293,11 +292,15 @@ spec:
               value: "^/(?:index.html)?$"
             - name: INJECT_BEFORE
               value: "</head>"
-              # Typically use either custom CSS or JS
+              # Typically use either custom CSS or JS not both
             - name: INJECT_CSS
               value: appname-banner.css
             - name: INJECT_JS
               value: appname-banner.js
+            - name: CLASSIFICATION
+              value: SECRET
+            - name: CLASSIFICATION_LABEL
+              value: NOFORN
           # Optional: resource limits
           resources:
             requests:
@@ -349,12 +352,12 @@ spec:
 - name: BACKEND_PORT
   value: "8080"
 - name: INJECT_PATH_REGEX
-  value: "^/(?!api|actuator|static|assets|.*\\.(js|css|png|jpg|svg|ico|woff2?)$$   ).*   $$"
+  value: "^/(?!api|actuator|static|assets|.*\\.(js|css|png|jpg|svg|ico|woff2?)$$).*$$"
 - name: INJECT_CSS
   value: "kafbat-banner.css"
 ```
 
-### Pgadmim
+### Pgadmin
 
 ```yaml
 - name: BACKEND_PORT
@@ -371,7 +374,7 @@ spec:
 - name: BACKEND_PORT
   value: "8081"
 - name: INJECT_PATH_REGEX
-  value: "^/(?!service|repository|v1|static|favicon|.*\\.(js|css|png|jpg|svg|ico|woff2?)$$   ).*   $$"
+  value: "^/(?!service|repository|v1|static|favicon|.*\\.(js|css|png|jpg|svg|ico|woff2?)$$).*   $$"
 - name: INJECT_CSS
   value: "nexus-banner.css"
 ```
@@ -382,7 +385,7 @@ spec:
 - name: BACKEND_PORT
   value: "9000"
 - name: INJECT_PATH_REGEX
-  value: "^/(?!api|static|css|js|images|favicon|.*\\.(js|css|png|jpg|svg|ico|woff2?)$$   ).*   $$"
+  value: "^/(?!api|static|css|js|images|favicon|.*\\.(js|css|png|jpg|svg|ico|woff2?)$$).*   $$"
 - name: INJECT_CSS
   value: "sonarqube-banner.css"
 ```

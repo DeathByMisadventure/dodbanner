@@ -13,7 +13,7 @@
     },
 
     "CUI": {
-      "text": "CONTROLLED UNCLASSIFIED INFORMATION",
+      "text": "CUI",
       "backgroundColor": "#502B85",
       "textColor": "#FFFFFF"
     },
@@ -30,7 +30,7 @@
       "textColor": "#FFFFFF"
     },
 
-    "TOP SECRET": {
+    "TOPSECRET": {
       "text": "TOP SECRET",
       "backgroundColor": "#FF8C00",
       "textColor": "#000000"
