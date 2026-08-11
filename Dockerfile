@@ -1,6 +1,6 @@
 ARG RUNTIME_IMAGE=quay.io/hummingbird/nginx:latest-builder
-ARG CLASSIFICATION=UNCLASSIFIED
-ARG CLASSIFICATION_LABEL=CUI
+ARG CLASSIFICATION="CLASSIFICATION UNAVAILABLE"
+ARG CLASSIFICATION_LABEL=
 
 FROM ${RUNTIME_IMAGE}
 ARG CLASSIFICATION
@@ -48,19 +48,3 @@ EXPOSE 9999
 STOPSIGNAL SIGQUIT
 ENTRYPOINT ["/docker-entrypoint.sh"]
 CMD ["nginx", "-g", "daemon off;"]
-
-# Usage:
-# grafana:
-#     # Backend application
-#     BACKEND_PORT: 3000
-#     # Application index to inject into
-#     INJECT_PATH_REGEX: "^/(?:login)?$"
-#     INJECT_BEFORE: "</head>"
-#     INJECTION: '<script src="/banner/banner.js"></script><link rel="stylesheet" href="/banner/banner.css"><link rel="stylesheet" href="/banner/grafana-banner.css">'
-# dbgate:
-#     BACKEND_PORT: 3000
-#     # Application index to inject into
-#     INJECT_PATH_REGEX: "^/(?:login.html)?$"
-#     # What gets injected into the application's HTML
-#     INJECT_BEFORE: "</head>"
-#     INJECTION: '<script src="banner/banner.js"></script><script src="banner/dbgate.js"></script><link rel="stylesheet" href="banner/banner.css">'

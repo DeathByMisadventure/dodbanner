@@ -12,8 +12,8 @@ entrypoint_log() {
 # ------------------------------------------------------------
 # Defaults
 # ------------------------------------------------------------
-: "${UPSTREAM_HOST:=127.0.0.1}"
-: "${UPSTREAM_PORT:=8080}"
+: "${BACKEND_HOST:=127.0.0.1}"
+: "${BACKEND_PORT:=8080}"
 : "${LISTEN_PORT:=9999}"
 : "${INJECT_PATH_REGEX:=^/(?:index.html)?$}"
 : "${INJECT_BEFORE:=</head>}"

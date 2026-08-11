@@ -1,5 +1,11 @@
 {
   "levels": {
+    "UNAVAILABLE": {
+      "text": "CLASSIFICATION UNAVAILABLE",
+      "backgroundColor": "#000000",
+      "textColor": "#FFFFFF"
+    },
+
     "UNCLASSIFIED": {
       "text": "UNCLASSIFIED",
       "backgroundColor": "#007A33",

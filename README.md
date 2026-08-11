@@ -1,8 +1,20 @@
 # DoD Classification Banner Injection Proxy
 
-A lightweight, zero-application-modification Nginx reverse proxy that automatically injects standard Department of Defense (DoD) classification banners (top and/or bottom) into the HTML of any web application.
+A lightweight, zero-application-modification Nginx reverse proxy that automatically injects standard Department of Defense (DoD) classification banners (top and/or bottom) into the HTML of web applications whose HTML entry points can be safely modified by Nginx sub_filter.
 
 Ideal for air-gapped, classified, or CUI environments where every web UI must display the current classification level without requiring changes to the upstream application.
+
+Important: dodbanner provides a visual classification marking only. It does not enforce access controls, prevent data disclosure, or determine the classification of application data. It must not be used as a security boundary.
+
+| Application | Injection path | CSS/JS | Notes            |
+| ----------- | -------------- | ------ | ---------------- |
+| Grafana     | `/`, `/login`  | CSS    | Fixed navigation |
+| MinIO       | `/`            | CSS    | Console layout   |
+| DbGate      | `/login.html`  | JS     | SPA              |
+| Kafbat      | SPA routes     | CSS    | API exclusions   |
+| pgAdmin     | `/browser`     | CSS    | ...              |
+| Nexus       | UI routes      | CSS    | ...              |
+| SonarQube   | UI routes      | CSS    | ...              |
 
 ---
 
@@ -35,6 +47,10 @@ The result is a standards-compliant classification banner with almost no operati
 
 The proxy is completely transparent to the application. No cookies, no session changes, no backend modifications.
 
+## Response compression
+
+DoD Banner disables upstream HTTP response compression for requests that may be modified because Nginx sub_filter must operate on uncompressed HTML. This is generally insignificant for HTML entry points but may affect large HTML responses.
+
 ---
 
 ## Quick Start
@@ -42,7 +58,7 @@ The proxy is completely transparent to the application. No cookies, no session c
 ### Build the image
 
 ```bash
-docker build -f Dockerfile.nginx-banner -t dodbanner:latest .
+docker build -f Dockerfile -t dodbanner:latest .
 ```
 
 ### Run it
@@ -172,7 +188,8 @@ Example for a generic SPA:
 
 ## Security Considerations
 
-- Classification is determined solely by the content of `banner-classification`. Treat that file (or the build ARG) as sensitive configuration.
+- Classification is determined solely by the content of `banner-classification`.
+The classification configuration is security-sensitive because its integrity must be protected. The classification value itself is not a secret.
 - The proxy does **not** enforce classification; it only displays it. Access control remains the responsibility of the upstream application and network controls.
 - All banner assets are public within the container; do not place secrets in them.
 

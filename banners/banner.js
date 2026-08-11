@@ -2,9 +2,9 @@
 
   // Built-in defaults in case any files are missing.
   const defaultLevels = {
-    UNCLASSIFIED: {
-      text: "UNCLASSIFIED",
-      backgroundColor: "#007A33",
+    UNAVAILABLE: {
+      text: "CLASSIFICATION UNAVAILABLE",
+      backgroundColor: "#000000",
       textColor: "#FFFFFF"
     }
   };
