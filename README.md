@@ -91,7 +91,7 @@ You can override classification at runtime by mounting a file over `/usr/share/n
 
 ### `banner-classification` (plain text)
 
-```
+```text
 UNCLASSIFIED
 FOUO
 ```
@@ -198,6 +198,30 @@ environment:
         <script src="/banner/banner.js"></script>
         <link rel="stylesheet" href="/banner/banner.css">
         <link rel="stylesheet" href="/banner/kafbat-banner.css">
+```
+
+### Pgadmin
+
+```yaml
+environment:
+  PROXY_PORT: "80"
+  APP_INDEX: "^/(?:browser)?/?$"
+  INJECTION: >
+        <script src="/banner/banner.js"></script>
+        <link rel="stylesheet" href="/banner/banner.css">
+        <link rel="stylesheet" href="/banner/pgadmin-banner.css">
+```
+
+### SonarQube
+
+```yaml
+environment:
+  PROXY_PORT: "9000"
+  APP_INDEX: "^/(?!api|static|css|js|images|favicon|.*\\.(js|css|png|jpg|svg|ico|woff2?)$).*$"
+  INJECTION: >
+        <script src="/banner/banner.js"></script>
+        <link rel="stylesheet" href="/banner/banner.css">
+        <link rel="stylesheet" href="/banner/sonarqube-banner.css">
 ```
 
 ---

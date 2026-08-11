@@ -1,0 +1,18 @@
+/*
+ * ============================================================
+ * SonarQube – DoD Banner Layout Adjustments
+ * ============================================================
+ */
+
+/* SonarQube’s main content area */
+#content {
+  /* Make room for both banners */
+  height: calc(100vh - (2 * var(--dod-banner-height))) !important;
+  margin-top: var(--dod-banner-height) !important;
+  box-sizing: border-box;
+}
+
+/* Some SonarQube layouts also use .workspace */
+.workspace {
+  height: calc(100% - var(--dod-banner-height)) !important;
+}
