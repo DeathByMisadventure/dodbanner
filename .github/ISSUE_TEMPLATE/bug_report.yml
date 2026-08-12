@@ -1,0 +1,166 @@
+name: Bug Report
+description: Report a problem with banner injection or another project feature
+title: "[Bug]: "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a bug!
+
+        Please provide as much detail as possible. For injection-related issues,
+        the application, request path, and relevant configuration are especially helpful.
+
+  - type: dropdown
+    id: application
+    attributes:
+      label: Application
+      description: Which application is experiencing the problem?
+      options:
+        - DBGate
+        - Grafana
+        - HashiCorp Vault
+        - Kafbat / Kafka UI
+        - Keycloak
+        - Mattermost
+        - MinIO
+        - Nexus
+        - pgAdmin
+        - Prometheus
+        - SonarQube
+        - New application / integration
+        - General / application-independent
+        - Other
+    validations:
+      required: true
+
+  - type: input
+    id: application-version
+    attributes:
+      label: Application Version
+      description: What version of the affected application are you running?
+      placeholder: "e.g. Grafana 12.1.0"
+
+  - type: input
+    id: image-version
+    attributes:
+      label: Banner Image Version
+      description: What version/tag of this project are you running?
+      placeholder: "e.g. latest, v1.2.0, or image digest"
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug Description
+      description: Clearly describe what went wrong.
+      placeholder: |
+        When I...
+
+        I expected...
+
+        Instead...
+
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to Reproduce
+      description: Provide the steps needed to reproduce the problem.
+      placeholder: |
+        1. Configure...
+        2. Navigate to...
+        3. Observe...
+    validations:
+      required: true
+
+  - type: textarea
+    id: configuration
+    attributes:
+      label: Relevant Configuration
+      description: Provide the relevant environment variables or configuration.
+      render: yaml
+      placeholder: |
+        BACKEND_PORT: "8080"
+        INJECT_PATH_REGEX: "..."
+        INJECT_CSS: "..."
+
+  - type: input
+    id: request-path
+    attributes:
+      label: Affected Request / URL Path
+      description: If applicable, which URL or path triggers the problem?
+      placeholder: "/ui/"
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: What did you expect to happen?
+      placeholder: |
+        The banner should...
+
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual Behavior
+      description: What actually happens?
+      placeholder: |
+        The page...
+
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs / Error Messages
+      description: Include relevant container, proxy, browser console, or application logs.
+      render: text
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots
+      description: If applicable, attach screenshots showing the problem.
+
+  - type: dropdown
+    id: deployment
+    attributes:
+      label: Deployment Environment
+      description: Where is the project running?
+      options:
+        - Docker
+        - Kubernetes
+        - Docker Compose
+        - Other
+    validations:
+      required: true
+
+  - type: input
+    id: browser
+    attributes:
+      label: Browser
+      description: If the issue is browser/UI related, which browser and version?
+      placeholder: "e.g. Chrome 151"
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Context
+      description: Anything else that might help diagnose the issue.
+
+  - type: checkboxes
+    id: contribution
+    attributes:
+      label: Contribution
+      options:
+        - label: I would be willing to help test a fix.
+          required: false
+        - label: I would be willing to submit a pull request for this issue.
+          required: false

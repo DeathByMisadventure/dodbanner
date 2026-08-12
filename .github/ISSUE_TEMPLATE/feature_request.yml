@@ -1,0 +1,89 @@
+name: Feature Request
+description: Suggest an improvement or new feature for the project
+title: "[Feature]: "
+labels:
+  - enhancement
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to suggest an improvement!
+
+        Please provide as much detail as possible so the feature can be evaluated and, if appropriate, implemented.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem / Use Case
+      description: What problem would this feature solve? What are you trying to accomplish?
+      placeholder: |
+        I'm trying to...
+        Currently, this requires...
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposed-solution
+    attributes:
+      label: Proposed Solution
+      description: Describe the feature or behavior you'd like to see.
+      placeholder: |
+        It would be useful if the application could...
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives Considered
+      description: What other approaches or workarounds have you considered?
+      placeholder: |
+        I currently work around this by...
+
+  - type: dropdown
+    id: application
+    attributes:
+      label: Application
+      description: Which application or integration does this request relate to?
+      options:
+        - DBGate
+        - Grafana
+        - HashiCorp Vault
+        - Kafbat / Kafka UI
+        - Keycloak
+        - Mattermost
+        - MinIO
+        - Nexus
+        - pgAdmin
+        - Prometheus
+        - SonarQube
+        - New application / integration
+        - General / application-independent
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: configuration
+    attributes:
+      label: Relevant Configuration
+      description: If applicable, provide your current configuration or relevant environment variables.
+      render: yaml
+      placeholder: |
+        BACKEND_PORT: "8080"
+        INJECT_PATH_REGEX: "..."
+        INJECT_CSS: "..."
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Context
+      description: Add screenshots, examples, links, or anything else that may help explain the request.
+      placeholder: |
+        Screenshots, examples, links, etc.
+
+  - type: checkboxes
+    id: contribution
+    attributes:
+      label: Contribution
+      options:
+        - label: I would be willing to help implement or test this feature.
+          required: false
