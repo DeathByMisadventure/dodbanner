@@ -113,9 +113,9 @@ All configuration is done via environment variables (substituted into the Nginx 
 
 ### Build-time arguments (Dockerfile)
 
-| ARG                   | Default        | Description |
-|-----------------------|----------------|-------------|
-| `RUNTIME_IMAGE`       | `quay.io/hummingbird/nginx:latest-builder` | Base image |
+| ARG | Default | Description |
+| ---------------------- | ---------------- | ------------- |
+| `RUNTIME_IMAGE` | `quay.io/hummingbird/nginx:latest-builder` | Base image |
 
 ---
 
@@ -315,18 +315,7 @@ spec:
               memory: 128Mi
 ```
 
-### Application-specific examples
-
-#### Grafana
-
-```yaml
-- name: BACKEND_PORT
-  value: "3000"
-- name: INJECT_PATH_REGEX
-  value: "^/(?:login)?$"
-- name: INJECT_CSS
-  value: "grafana-banner.css"
-```
+## Application-specific examples
 
 ### DBGate
 
@@ -339,15 +328,26 @@ spec:
   value: "dbgate-banner.js"
 ```
 
-### MinIO
+### Grafana
 
 ```yaml
 - name: BACKEND_PORT
-  value: "9001"
+  value: "3000"
 - name: INJECT_PATH_REGEX
-  value: "^/(?:)$"
+  value: "^/(?:login)?$"
 - name: INJECT_CSS
-  value: "minio-banner.css"
+  value: "grafana-banner.css"
+```
+
+### Hashicorp Vault
+
+```yaml
+- name: BACKEND_PORT
+  value: "8200"
+- name: INJECT_PATH_REGEX
+  value: "^/ui/.*$"
+- name: INJECT_CSS
+  value: "vault-banner.css"
 ```
 
 ### Kafbat / KafkaUI
@@ -361,6 +361,50 @@ spec:
   value: "kafbat-banner.css"
 ```
 
+### Keycloak
+
+```yaml
+- name: BACKEND_PORT
+  value: "8080"
+- name: INJECT_PATH_REGEX
+  value: "^/(?!.*\\.(js|css|png|jpg|jpeg|gif|svg|ico|woff2?|map|json)$).*"
+- name: INJECT_CSS
+  value: "keycloak-banner.css"
+```
+
+### Mattermost
+
+```yaml
+- name: BACKEND_PORT
+  value: "8065"
+- name: INJECT_PATH_REGEX
+  value: "^/(?!api|plugins|static|images|fonts|.*\\.(js|css|png|jpg|jpeg|gif|svg|ico|woff2?|map|json)$).*"
+- name: INJECT_CSS
+  value: "mattermost-banner.css"
+```
+
+### MinIO
+
+```yaml
+- name: BACKEND_PORT
+  value: "9001"
+- name: INJECT_PATH_REGEX
+  value: "^/(?:)$"
+- name: INJECT_CSS
+  value: "minio-banner.css"
+```
+
+### Nexus
+
+```yaml
+- name: BACKEND_PORT
+  value: "8081"
+- name: INJECT_PATH_REGEX
+  value: "^/(?!service|repository|v1|static|favicon|.*\\.(js|css|png|jpg|svg|ico|woff2?)$).*"
+- name: INJECT_CSS
+  value: "nexus-banner.css"
+```
+
 ### Pgadmin
 
 ```yaml
@@ -372,18 +416,7 @@ spec:
   value: "pgadmin-banner.css"
 ```
 
-#### Nexus
-
-```yaml
-- name: BACKEND_PORT
-  value: "8081"
-- name: INJECT_PATH_REGEX
-  value: "^/(?!service|repository|v1|static|favicon|.*\\.(js|css|png|jpg|svg|ico|woff2?)$).*"
-- name: INJECT_CSS
-  value: "nexus-banner.css"
-```
-
-#### SonarQube
+### SonarQube
 
 ```yaml
 - name: BACKEND_PORT
@@ -392,37 +425,4 @@ spec:
   value: "^/(?!api|static|css|js|images|favicon|.*\\.(js|css|png|jpg|svg|ico|woff2?)$).*"
 - name: INJECT_CSS
   value: "sonarqube-banner.css"
-```
-
-#### Hashicorp Vault
-
-```yaml
-- name: BACKEND_PORT
-  value: "8200"
-- name: INJECT_PATH_REGEX
-  value: "^/ui/.*$"
-- name: INJECT_CSS
-  value: "vault-banner.css"
-```
-
-#### Mattermost
-
-```yaml
-- name: BACKEND_PORT
-  value: "8065"
-- name: INJECT_PATH_REGEX
-  value: "^/(?!api|plugins|static|images|fonts|.*\\.(js|css|png|jpg|jpeg|gif|svg|ico|woff2?|map|json)$).*"
-- name: INJECT_CSS
-  value: "mattermost-banner.css"
-```
-
-#### Keycloak
-
-```yaml
-- name: BACKEND_PORT
-  value: "8080"
-- name: INJECT_PATH_REGEX
-  value: "^/(?!.*\\.(js|css|png|jpg|jpeg|gif|svg|ico|woff2?|map|json)$).*"
-- name: INJECT_CSS
-  value: "keycloak-banner.css"
 ```
