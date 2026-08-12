@@ -49,14 +49,23 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
-      - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@v0.36.0
+      - name: Run Grype vulnerability scanner
+        uses: anchore/scan-action@v6
         with:
-          image-ref: '${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest'
-          format: table
-          exit-code: '0'
-          hide-progress: false
-          ignore-unfixed: true
-          vuln-type: 'os,library'
-          severity: 'CRITICAL,HIGH,MEDIUM'
-          scanners: 'vuln'
+          image: '${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest'
+          fail-build: false
+          severity-cutoff: medium
+
+
+
+      # - name: Run Trivy vulnerability scanner
+      #   uses: aquasecurity/trivy-action@v0.36.0
+      #   with:
+      #     image-ref: '${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest'
+      #     format: table
+      #     exit-code: '0'
+      #     hide-progress: false
+      #     ignore-unfixed: true
+      #     vuln-type: 'os,library'
+      #     severity: 'CRITICAL,HIGH,MEDIUM'
+      #     scanners: 'vuln'
