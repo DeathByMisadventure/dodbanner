@@ -99,6 +99,51 @@ Point users at `http://your-host:9999` instead of the original application port.
 
 ---
 
+## A Security-Focused Base Image
+
+This project uses the [Hummingbird NGINX](https://quay.io/hummingbird/nginx) image
+`quay.io/hummingbird/nginx:latest-builder` as its base image.
+
+Hummingbird provides a security-focused NGINX distribution built with a minimal
+runtime footprint. Keeping the image small and limiting the number of installed
+packages reduces the overall attack surface and, importantly, reduces the number
+of components that need to be tracked and scanned for vulnerabilities.
+
+This is particularly useful for this project because the resulting image is
+intended to act as a lightweight reverse proxy with HTML/CSS/JavaScript injection.
+It does not require a general-purpose Linux userspace or a large collection of
+additional utilities.
+
+### Why this matters for vulnerability scanning
+
+Container vulnerability scanners such as Trivy scan the operating-system
+packages and application dependencies contained within an image. A smaller,
+purpose-built base image generally means:
+
+- **Fewer packages to scan** — reducing the number of potential vulnerable
+  components.
+- **Smaller attack surface** — unnecessary services, libraries, and utilities
+  aren't included in the runtime image.
+- **Fewer vulnerability findings** — minimal images tend to contain fewer
+  packages that can introduce known CVEs.
+- **Simpler remediation** — vulnerabilities in the base image can generally be
+  addressed by updating the base image rather than maintaining a large
+  collection of OS packages ourselves.
+- **Faster scanning** — a smaller image means less content for scanners such as
+  Trivy to inspect.
+
+The project's GitHub Actions workflow runs Trivy against every published image
+to provide an additional check for known vulnerabilities in the resulting
+container.
+
+> **Note:** A minimal base image does not guarantee a vulnerability-free
+> container. Vulnerabilities can still exist in NGINX, injected application
+> assets, dependencies, or the base image itself. The goal is to minimize the
+> number of components and therefore reduce the overall attack surface and
+> vulnerability exposure.
+
+---
+
 ## Environment Variable Configuration
 
 All configuration is done via environment variables (substituted into the Nginx template at container start).
