@@ -4,7 +4,7 @@ A lightweight, zero-application-modification Nginx reverse proxy that automatica
 
 Ideal for air-gapped, classified, or CUI environments where every web UI must display the current classification level without requiring changes to the upstream application.
 
-Important: dodbanner provides a visual classification marking only. It does not enforce access controls, prevent data disclosure, or determine the classification of application data. It must not be used as a security boundary.
+Important: `DoD Banner` provides a visual classification marking only. It does not enforce access controls, prevent data disclosure, or determine the classification of application data. It must not be used as a security boundary.
 
 | Application | Injection scope | CSS/JS | Notes |
 | ----------- | --------------- | ------ | ----- |
@@ -235,10 +235,10 @@ To add a new classification color or change the default height, edit the JSON fi
 
 ## Kubernetes Sidecar Pattern
 
-The most common production deployment is to run `dodbanner` as a **sidecar** next to the application container in the same Pod.
+The most common production deployment is to run `DoD Banner` as a **sidecar** next to the application container in the same Pod.
 
 - The application container continues to listen on its normal port (e.g. `8080`).
-- The `dodbanner` sidecar listens on `9999` and proxies to the application on `localhost`.
+- The `DoD Banner` sidecar listens on `9999` and proxies to the application on `localhost`.
 - The Kubernetes **Service** points at the sidecar port (`9999`), so all external traffic goes through the banner proxy.
 
 ```mermaid
