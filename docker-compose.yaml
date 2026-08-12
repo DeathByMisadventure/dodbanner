@@ -1,65 +1,70 @@
 services:
-
   # -------------------------------------------------
-  # HashiCorp Vault
+  # Mattermost (Postgres-backed)
   # -------------------------------------------------
   #
-  # Development-only Vault instance.
-  # The UI/API are NOT exposed directly to the host.
+  # Development-only Mattermost instance.
+  # Mattermost itself is NOT exposed directly to the host --
+  # only the dodbanner proxy in front of it is (see below).
   #
-  vault:
-    image: hashicorp/vault:2.0.3
+  mattermost-db:
+    image: postgres:16-alpine
     restart: unless-stopped
-    command: server -dev -dev-root-token-id root -dev-listen-address=0.0.0.0:8200
     environment:
-      VAULT_DEV_ROOT_TOKEN_ID: root
+      POSTGRES_USER: mmuser
+      POSTGRES_PASSWORD: mmuser_password
+      POSTGRES_DB: mattermost
     expose:
-      - "8200"
+      - "5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U mmuser -d mattermost"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
+  mattermost:
+    image: mattermost/mattermost-team-edition:release-10.12
+    restart: unless-stopped
+    depends_on:
+      mattermost-db:
+        condition: service_healthy
+    environment:
+      MM_SQLSETTINGS_DRIVERNAME: postgres
+      MM_SQLSETTINGS_DATASOURCE: "postgres://mmuser:mmuser_password@mattermost-db:5432/mattermost?sslmode=disable&connect_timeout=10"
+      # This MUST match the URL a browser will actually use, i.e. the
+      # dodbanner proxy port below -- not Mattermost's own port. If this
+      # doesn't match, login redirects, websockets, and asset URLs break.
+      MM_SERVICESETTINGS_SITEURL: "http://localhost:9999"
+      MM_SERVICESETTINGS_LISTENADDRESS: ":8065"
+      MM_SERVICESETTINGS_ENABLELOCALMODE: "false"
+    expose:
+      - "8065"
 
   # -------------------------------------------------
-  # DoD Banner Injection Proxy
+  # DoD Banner Injection Proxy (Mattermost)
   # -------------------------------------------------
-
+  #
+  # Uses a different host port (9998) than the Vault proxy (9999)
+  # so both test targets can run side-by-side.
+  #
   dodbanner:
     image: dodbanner:latest
     restart: unless-stopped
     ports:
       - "9999:9999"
     environment:
-      BACKEND_HOST: vault
-      BACKEND_PORT: "8200"
+      BACKEND_HOST: mattermost
+      BACKEND_PORT: "8065"
       LISTEN_PORT: "9999"
-
-      # Vault's UI is served from /ui.
-      # Only modify the HTML entry point; don't touch
-      # JavaScript, CSS, API, or static asset requests.
-      INJECT_PATH_REGEX: "^/ui/.*$"
+      # Mattermost is a single-page app: nearly every path (/, /login,
+      # /admin_console, /<team>/channels/<channel>, etc.) serves the same
+      # root index.html. Rather than enumerate every SPA route, exclude
+      # the API, plugin routes, static assets, and websocket path -- same
+      # pattern used for Kafbat/Nexus/SonarQube above.
+      INJECT_PATH_REGEX: "^/(?!api|plugins|static|images|fonts|.*\\.(js|css|png|jpg|jpeg|gif|svg|ico|woff2?|map|json)$).*"
       INJECT_BEFORE: "</head>"
-
-      # Application-specific customization.
-      INJECT_CSS: "vault-banner.css"
-
-      CLASSIFICATION: "SECRET"
-      CLASSIFICATION_LABEL: "NOFORN"
-
+      INJECT_CSS: "mattermost-banner.css"
+      CLASSIFICATION: "UNCLASSIFIED"
+      CLASSIFICATION_LABEL: "smeg"
     depends_on:
-      - vault
-
-  # # -------------------------------------------------
-  # # DoD Banner Injection Proxy
-  # # -------------------------------------------------
-  # dodbanner:
-  #   image: dodbanner:latest
-  #   restart: unless-stopped
-  #   ports:
-  #     - "9999:9999"
-  #   environment:
-  #     BACKEND_HOST: pgadmin
-  #     BACKEND_PORT: "80"
-  #     LISTEN_PORT: "9999"
-  #     INJECT_PATH_REGEX: "^/(?:browser)?/?$"
-  #     INJECT_BEFORE: "</head>"
-  #     INJECT_CSS: "pgadmin-banner.css"
-  #     CLASSIFICATION: "UNCLASSIFIED"
-  #     CLASSIFICATION_LABEL: "SMEG"
+      - mattermost

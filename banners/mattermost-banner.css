@@ -1,0 +1,20 @@
+/* ============================================================
+   Mattermost Banner Layout
+   ============================================================ */
+
+#root {
+  padding-top: var(--dod-banner-height);
+  padding-bottom: var(--dod-banner-height);
+  box-sizing: border-box;
+  height: 100vh;
+}
+
+button[data-cy="onboarding-task-list-action-button"] {
+  bottom: calc(24px + var(--dod-banner-height)) !important;
+}
+
+.signup-team__container,
+.login-body-message,
+#login_section {
+  min-height: calc(100vh - (2 * var(--dod-banner-height)));
+}

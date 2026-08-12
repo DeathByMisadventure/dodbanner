@@ -404,3 +404,14 @@ spec:
 - name: INJECT_CSS
   value: "vault-banner.css"
 ```
+
+#### Mattermost
+
+```yaml
+- name: BACKEND_PORT
+  value: "8065"
+- name: INJECT_PATH_REGEX
+  value: "^/(?!api|plugins|static|images|fonts|.*\\.(js|css|png|jpg|jpeg|gif|svg|ico|woff2?|map|json)$).*"
+- name: INJECT_CSS
+  value: "mattermost-banner.css"
+```
