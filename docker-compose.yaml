@@ -1,24 +1,22 @@
-
 services:
 
   # -------------------------------------------------
-  # Prometheus
+  # Alertmanager
   # -------------------------------------------------
   #
-  # Development-only Prometheus instance.
-  # Prometheus itself is NOT exposed directly to the host --
-  # only the dodbanner proxy below is exposed.
+  # Development-only Alertmanager instance.
+  # Alertmanager itself is NOT exposed directly to
+  # the host -- only the dodbanner proxy is exposed.
   #
-  # UI:
+  # UI through dodbanner:
   #   http://localhost:9999
   #
 
-  prometheus:
-    image: prom/prometheus:latest
+  alertmanager:
+    image: quay.io/prometheus/alertmanager:latest
     restart: unless-stopped
     expose:
-      - "9090"
-
+      - "9093"
 
   # -------------------------------------------------
   # DoD Banner Injection Proxy
@@ -34,22 +32,19 @@ services:
     ports:
       - "9999:9999"
     environment:
-      BACKEND_HOST: prometheus
-      BACKEND_PORT: "9090"
+      BACKEND_HOST: alertmanager
+      BACKEND_PORT: "9093"
       LISTEN_PORT: "9999"
 
-      # Prometheus serves its UI from multiple paths but uses
-      # static assets under /static and /web.
-      #
-      # Start by injecting into HTML responses while excluding
-      # JavaScript, CSS, images, fonts, maps, and JSON assets.
+      # Alertmanager serves its web UI from the root path.
+      # Exclude static assets and other non-HTML resources.
       INJECT_PATH_REGEX: "^/(?!.*\\.(js|css|png|jpg|jpeg|gif|svg|ico|woff2?|map|json)$).*"
 
       INJECT_BEFORE: "</head>"
-      INJECT_CSS: "prometheus-banner.css"
+      INJECT_CSS: "alertmanager-banner.css"
 
       CLASSIFICATION: "UNCLASSIFIED"
       CLASSIFICATION_LABEL: "smeg"
 
     depends_on:
-      - prometheus
+      - alertmanager

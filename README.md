@@ -8,6 +8,7 @@ Important: `DoD Banner` provides a visual classification marking only. It does n
 
 | Application | Injection scope | CSS/JS | Notes |
 | ----------- | --------------- | ------ | ----- |
+| Alertmanager | UI Routes | CSS | Fixed Navication |
 | DBGate | `/`, `/login.html` | JS | SPA |
 | Grafana | `/`, `/login` | CSS | Fixed navigation |
 | HashiCorp Vault | `/ui/*` | CSS | UI-only |
@@ -365,6 +366,17 @@ spec:
 ```
 
 ## Application-specific examples
+
+### Alertmanager
+
+```yaml
+- name: BACKEND_PORT
+  value: "9093"
+- name: INJECT_PATH_REGEX
+  value: "^/(?!.*\\.(js|css|png|jpg|jpeg|gif|svg|ico|woff2?|map|json)$).*"
+- name: INJECT_CSS
+  value: "alertmanager-banner.css"
+```
 
 ### DBGate
 

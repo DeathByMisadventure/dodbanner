@@ -1,0 +1,10 @@
+/*
+ * ============================================================
+ * Alertmanager Layout Adjustments
+ * ============================================================
+ */
+
+body {
+  padding-top: var(--dod-banner-height);
+  padding-bottom: var(--dod-banner-height);
+}
