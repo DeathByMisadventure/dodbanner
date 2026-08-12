@@ -1,0 +1,13 @@
+/*
+ * ============================================================
+ * Prometheus UI Layout Adjustments
+ * ============================================================
+ */
+
+header.mantine-AppShell-header {
+  top: var(--dod-banner-height);
+}
+
+main.mantine-AppShell-main {
+  padding-top: calc(var(--app-shell-header-offset, 0rem) + var(--dod-banner-height)) !important;
+}

@@ -17,4 +17,3 @@ body.app-grafana [data-testid="data-testid navigation mega-menu"] {
   top: var(--dod-banner-height) !important;
   height: calc(100% - (2 * var(--dod-banner-height))) !important;
 }
-

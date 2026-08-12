@@ -2,36 +2,22 @@
 services:
 
   # -------------------------------------------------
-  # Keycloak
+  # Prometheus
   # -------------------------------------------------
   #
-  # Development-only Keycloak instance.
-  # Keycloak itself is NOT exposed directly to the host --
+  # Development-only Prometheus instance.
+  # Prometheus itself is NOT exposed directly to the host --
   # only the dodbanner proxy below is exposed.
   #
   # UI:
   #   http://localhost:9999
   #
-  # Admin:
-  #   http://localhost:9999/admin
-  #
-  # Credentials:
-  #   admin / admin
-  #
 
-  keycloak:
-    image: quay.io/keycloak/keycloak:latest
+  prometheus:
+    image: prom/prometheus:latest
     restart: unless-stopped
-    command:
-      - start-dev
-    environment:
-      KC_BOOTSTRAP_ADMIN_USERNAME: admin
-      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
-      KC_HTTP_ENABLED: "true"
-      KC_PROXY_HEADERS: "xforwarded"
-      KC_HOSTNAME: "http://localhost:9999"
     expose:
-      - "8080"
+      - "9090"
 
 
   # -------------------------------------------------
@@ -48,20 +34,22 @@ services:
     ports:
       - "9999:9999"
     environment:
-      BACKEND_HOST: keycloak
-      BACKEND_PORT: "8080"
+      BACKEND_HOST: prometheus
+      BACKEND_PORT: "9090"
       LISTEN_PORT: "9999"
 
-      # Keycloak serves multiple applications/pages from the
-      # same server. Initially inject into HTML responses while
-      # excluding static assets.
+      # Prometheus serves its UI from multiple paths but uses
+      # static assets under /static and /web.
+      #
+      # Start by injecting into HTML responses while excluding
+      # JavaScript, CSS, images, fonts, maps, and JSON assets.
       INJECT_PATH_REGEX: "^/(?!.*\\.(js|css|png|jpg|jpeg|gif|svg|ico|woff2?|map|json)$).*"
 
       INJECT_BEFORE: "</head>"
-      INJECT_CSS: "keycloak-banner.css"
+      INJECT_CSS: "prometheus-banner.css"
 
-      CLASSIFICATION: "CUI"
-      CLASSIFICATION_LABEL: "TEST"
+      CLASSIFICATION: "UNCLASSIFIED"
+      CLASSIFICATION_LABEL: "smeg"
 
     depends_on:
-      - keycloak
+      - prometheus

@@ -416,6 +416,17 @@ spec:
   value: "pgadmin-banner.css"
 ```
 
+### Prometheus
+
+```yaml
+- name: BACKEND_PORT
+  value: "9090"
+- name: INJECT_PATH_REGEX
+  value: "^/(?!.*\\.(js|css|png|jpg|jpeg|gif|svg|ico|woff2?|map|json)$).*"
+- name: INJECT_CSS
+  value: "prometheus-banner.css"
+```
+
 ### SonarQube
 
 ```yaml
