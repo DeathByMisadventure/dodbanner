@@ -415,3 +415,14 @@ spec:
 - name: INJECT_CSS
   value: "mattermost-banner.css"
 ```
+
+#### Keycloak
+
+```yaml
+- name: BACKEND_PORT
+  value: "8080"
+- name: INJECT_PATH_REGEX
+  value: "^/(?!.*\\.(js|css|png|jpg|jpeg|gif|svg|ico|woff2?|map|json)$).*"
+- name: INJECT_CSS
+  value: "keycloak-banner.css"
+```

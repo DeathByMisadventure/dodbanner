@@ -1,70 +1,67 @@
+
 services:
-  # -------------------------------------------------
-  # Mattermost (Postgres-backed)
-  # -------------------------------------------------
-  #
-  # Development-only Mattermost instance.
-  # Mattermost itself is NOT exposed directly to the host --
-  # only the dodbanner proxy in front of it is (see below).
-  #
-  mattermost-db:
-    image: postgres:16-alpine
-    restart: unless-stopped
-    environment:
-      POSTGRES_USER: mmuser
-      POSTGRES_PASSWORD: mmuser_password
-      POSTGRES_DB: mattermost
-    expose:
-      - "5432"
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U mmuser -d mattermost"]
-      interval: 5s
-      timeout: 5s
-      retries: 10
-
-  mattermost:
-    image: mattermost/mattermost-team-edition:release-10.12
-    restart: unless-stopped
-    depends_on:
-      mattermost-db:
-        condition: service_healthy
-    environment:
-      MM_SQLSETTINGS_DRIVERNAME: postgres
-      MM_SQLSETTINGS_DATASOURCE: "postgres://mmuser:mmuser_password@mattermost-db:5432/mattermost?sslmode=disable&connect_timeout=10"
-      # This MUST match the URL a browser will actually use, i.e. the
-      # dodbanner proxy port below -- not Mattermost's own port. If this
-      # doesn't match, login redirects, websockets, and asset URLs break.
-      MM_SERVICESETTINGS_SITEURL: "http://localhost:9999"
-      MM_SERVICESETTINGS_LISTENADDRESS: ":8065"
-      MM_SERVICESETTINGS_ENABLELOCALMODE: "false"
-    expose:
-      - "8065"
 
   # -------------------------------------------------
-  # DoD Banner Injection Proxy (Mattermost)
+  # Keycloak
   # -------------------------------------------------
   #
-  # Uses a different host port (9998) than the Vault proxy (9999)
-  # so both test targets can run side-by-side.
+  # Development-only Keycloak instance.
+  # Keycloak itself is NOT exposed directly to the host --
+  # only the dodbanner proxy below is exposed.
   #
+  # UI:
+  #   http://localhost:9999
+  #
+  # Admin:
+  #   http://localhost:9999/admin
+  #
+  # Credentials:
+  #   admin / admin
+  #
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:latest
+    restart: unless-stopped
+    command:
+      - start-dev
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+      KC_HTTP_ENABLED: "true"
+      KC_PROXY_HEADERS: "xforwarded"
+      KC_HOSTNAME: "http://localhost:9999"
+    expose:
+      - "8080"
+
+
+  # -------------------------------------------------
+  # DoD Banner Injection Proxy
+  # -------------------------------------------------
+  #
+  # Host:
+  #   http://localhost:9999
+  #
+
   dodbanner:
     image: dodbanner:latest
     restart: unless-stopped
     ports:
       - "9999:9999"
     environment:
-      BACKEND_HOST: mattermost
-      BACKEND_PORT: "8065"
+      BACKEND_HOST: keycloak
+      BACKEND_PORT: "8080"
       LISTEN_PORT: "9999"
-      # Mattermost is a single-page app: nearly every path (/, /login,
-      # /admin_console, /<team>/channels/<channel>, etc.) serves the same
-      # root index.html. Rather than enumerate every SPA route, exclude
-      # the API, plugin routes, static assets, and websocket path -- same
-      # pattern used for Kafbat/Nexus/SonarQube above.
-      INJECT_PATH_REGEX: "^/(?!api|plugins|static|images|fonts|.*\\.(js|css|png|jpg|jpeg|gif|svg|ico|woff2?|map|json)$).*"
+
+      # Keycloak serves multiple applications/pages from the
+      # same server. Initially inject into HTML responses while
+      # excluding static assets.
+      INJECT_PATH_REGEX: "^/(?!.*\\.(js|css|png|jpg|jpeg|gif|svg|ico|woff2?|map|json)$).*"
+
       INJECT_BEFORE: "</head>"
-      INJECT_CSS: "mattermost-banner.css"
-      CLASSIFICATION: "UNCLASSIFIED"
-      CLASSIFICATION_LABEL: "smeg"
+      INJECT_CSS: "keycloak-banner.css"
+
+      CLASSIFICATION: "CUI"
+      CLASSIFICATION_LABEL: "TEST"
+
     depends_on:
-      - mattermost
+      - keycloak

@@ -1,0 +1,7 @@
+/* ============================================================
+   Keycloak Banner Layout
+   ============================================================ */
+
+.pf-v5-c-form__group.pf-m-action[class*="buttonGroup_"] {
+  bottom: var(--dod-banner-height) !important;
+}
