@@ -6,15 +6,19 @@ Ideal for air-gapped, classified, or CUI environments where every web UI must di
 
 Important: dodbanner provides a visual classification marking only. It does not enforce access controls, prevent data disclosure, or determine the classification of application data. It must not be used as a security boundary.
 
-| Application | Injection path | CSS/JS | Notes            |
-| ----------- | -------------- | ------ | ---------------- |
-| Grafana     | `/`, `/login`  | CSS    | Fixed navigation |
-| MinIO       | `/`            | CSS    | Console layout   |
-| DbGate      | `/login.html`  | JS     | SPA              |
-| Kafbat      | SPA routes     | CSS    | API exclusions   |
-| pgAdmin     | `/browser`     | CSS    | ...              |
-| Nexus       | UI routes      | CSS    | ...              |
-| SonarQube   | UI routes      | CSS    | ...              |
+| Application | Injection scope | CSS/JS | Notes |
+| ----------- | --------------- | ------ | ----- |
+| DBGate | `/`, `/login.html` | JS | SPA |
+| Grafana | `/`, `/login` | CSS | Fixed navigation |
+| HashiCorp Vault | `/ui/*` | CSS | UI-only |
+| Kafbat / Kafka UI | SPA routes | CSS | API, actuator, and static assets excluded |
+| Keycloak | UI routes | CSS | Static assets excluded |
+| Mattermost | UI routes | CSS | API, plugins, and static assets excluded |
+| MinIO | `/` | CSS | Console layout |
+| Nexus | UI routes | CSS | API, repository, service, and static assets excluded |
+| pgAdmin | `/`, `/browser` | CSS | Browser UI |
+| Prometheus | UI routes | CSS | Static assets excluded |
+| SonarQube | UI routes | CSS | API and static assets excluded |
 
 ---
 
