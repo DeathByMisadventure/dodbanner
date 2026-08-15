@@ -25,8 +25,6 @@ RUN dnf install -y --setopt=install_weak_deps=False \
     rm -rf /etc/nginx/conf.d/default.conf && \
     cp /etc/nginx/mime.types.default /etc/nginx/mime.types && \
     chown -R nginx:nginx /etc/nginx/ && \
-    mkdir -p /var/cache/nginx && \
-    chown -R nginx:nginx /var/cache/nginx && \
     chown nginx:nginx /usr/share/nginx/html/banner/banner-classification
 
 

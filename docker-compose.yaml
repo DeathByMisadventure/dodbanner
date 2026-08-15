@@ -1,39 +1,32 @@
+
 services:
-
-  # -------------------------------------------------
-  # Alertmanager
-  # -------------------------------------------------
-  #
-  # Development-only Alertmanager instance.
-  # Alertmanager itself is NOT exposed directly to
-  # the host -- only the dodbanner proxy is exposed.
-  #
-  # UI through dodbanner:
-  #   http://localhost:9999
-  #
-
-  alertmanager:
-    image: quay.io/prometheus/alertmanager:latest
+  artifactory:
+    image: releases-docker.jfrog.io/jfrog/artifactory-oss:latest
+    container_name: artifactory
     restart: unless-stopped
-    expose:
-      - "9093"
-
-  # -------------------------------------------------
-  # DoD Banner Injection Proxy
-  # -------------------------------------------------
-  #
-  # Host:
-  #   http://localhost:9999
-  #
-
+    ports:
+      - "8081:8081"   # API / legacy
+      - "8082:8082"   # UI (main entry point)
+    environment:
+      # Use the built-in Derby DB (simplest possible)
+      JF_SHARED_DATABASE_TYPE: derby
+    # Optional: give it more memory if you have it
+    # environment:
+    #   - JF_SHARED_DATABASE_TYPE=derby
+    #   - EXTRA_JAVA_OPTIONS=-Xms512m -Xmx2g
+    ulimits:
+      nproc: 65535
+      nofile:
+        soft: 32000
+        hard: 40000
   dodbanner:
     image: dodbanner:latest
     restart: unless-stopped
     ports:
       - "9999:9999"
     environment:
-      BACKEND_HOST: alertmanager
-      BACKEND_PORT: "9093"
+      BACKEND_HOST: artifactory
+      BACKEND_PORT: "8082"
       LISTEN_PORT: "9999"
 
       # Alertmanager serves its web UI from the root path.
@@ -41,10 +34,7 @@ services:
       INJECT_PATH_REGEX: "^/(?!.*\\.(js|css|png|jpg|jpeg|gif|svg|ico|woff2?|map|json)$).*"
 
       INJECT_BEFORE: "</head>"
-      INJECT_CSS: "alertmanager-banner.css"
+      INJECT_CSS: "artifactory-banner.css"
 
       CLASSIFICATION: "UNCLASSIFIED"
       CLASSIFICATION_LABEL: "smeg"
-
-    depends_on:
-      - alertmanager
