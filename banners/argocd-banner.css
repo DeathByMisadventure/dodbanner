@@ -1,0 +1,10 @@
+/* ============================================================
+   ArgoCD Banner Layout
+   ============================================================ */
+
+body.banner-enabled #app {
+  box-sizing: border-box;
+  height: 100vh;
+  padding-top: var(--dod-banner-height);
+  padding-bottom: var(--dod-banner-height);
+}
