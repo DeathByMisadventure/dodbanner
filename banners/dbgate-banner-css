@@ -1,0 +1,24 @@
+/* ============================================================
+   DbGate Banner Layout
+   ============================================================ */
+
+/* Status bar: sit above the bottom classification banner */
+body[data-banner-enabled] .statusbar {
+  bottom: var(--dod-banner-height) !important;
+  /* keep natural height — do not grow into the banner */
+  height: auto !important;
+}
+
+/* Header / top chrome: push below the top banner.
+   DbGate uses --dim-header-top; if the computed base is 0, this is enough.
+   If inspect shows a non-zero base, use calc(BASE + var(--dod-banner-height)). */
+body[data-banner-enabled] {
+  --dim-header-top: var(--dod-banner-height);
+}
+
+/* Optional: if main content still runs under the bottom banner */
+body[data-banner-enabled] .main,
+body[data-banner-enabled] .dbgate-screen {
+  /* only if needed after testing */
+  /* padding-bottom: var(--dod-banner-height); */
+}
