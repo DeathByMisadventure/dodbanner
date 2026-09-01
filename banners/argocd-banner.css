@@ -10,6 +10,10 @@ body[data-banner-enabled] {
   box-sizing: border-box;
 }
 
+body[data-banner-enabled] .page__top-bar {
+  margin-top: var(--dod-banner-height);
+}
+
 /* Sidebar is position:fixed / full-viewport – pull it into the
    safe area between the banners */
 body[data-banner-enabled] .sidebar {
