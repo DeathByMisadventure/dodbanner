@@ -2,6 +2,7 @@
    ArgoCD Banner Layout
    ============================================================ */
 
+/* Attribute set by banner.js */
 body[data-banner-enabled] #app {
   box-sizing: border-box;
   height: 100vh;
@@ -10,36 +11,21 @@ body[data-banner-enabled] #app {
   overflow: hidden;
 }
 
-/* Sidebar */
+/* Sidebar – keep what already works */
 body[data-banner-enabled] .sidebar {
   top: var(--dod-banner-height) !important;
   height: calc(100vh - (2 * var(--dod-banner-height))) !important;
   max-height: calc(100vh - (2 * var(--dod-banner-height))) !important;
 }
 
-/* Main layout column */
-body[data-banner-enabled] .cd-layout {
-  height: 100%;
-  box-sizing: border-box;
-}
-
-body[data-banner-enabled] .cd-layout__content,
-body[data-banner-enabled] .page-wrapper,
-body[data-banner-enabled] .sb-page-wrapper,
-body[data-banner-enabled] .page {
-  height: 100%;
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  min-height: 0;
-}
-
-/* The piece that was still sitting under the top banner */
+/* Only push the outer page top bar down; do not force heights
+   on the content column or it will clip the inner flex-top-bar */
 body[data-banner-enabled] .page__top-bar {
   margin-top: var(--dod-banner-height);
 }
 
-/* Scrolling content area */
+/* Let the real content area fill remaining space and scroll
+   without collapsing its children */
 body[data-banner-enabled] .page__content-wrapper {
   flex: 1 1 auto;
   min-height: 0;
@@ -47,12 +33,12 @@ body[data-banner-enabled] .page__content-wrapper {
   box-sizing: border-box;
 }
 
-/* Optional: keep sliding panels inside the banner-safe area
-   (uncomment / adjust if a panel still goes under a banner) */
-/*
-body[data-banner-enabled] .sliding-panel {
-  top: var(--dod-banner-height) !important;
-  height: calc(100vh - (2 * var(--dod-banner-height))) !important;
-  max-height: calc(100vh - (2 * var(--dod-banner-height))) !important;
+/* Explicitly protect the action / tools bar so nothing
+   collapses or hides it */
+body[data-banner-enabled] .top-bar.flex-top-bar,
+body[data-banner-enabled] .flex-top-bar__actions,
+body[data-banner-enabled] .flex-top-bar__tools {
+  flex-shrink: 0;
+  visibility: visible;
+  opacity: 1;
 }
-*/
