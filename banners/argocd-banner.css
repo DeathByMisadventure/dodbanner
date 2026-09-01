@@ -2,8 +2,12 @@
    ArgoCD Banner Layout
    ============================================================ */
 
-/* Attribute set by banner.js */
-body[data-banner-enabled] #app {
+/* ----------------------------------------------------------
+   Shared: only pad #app when the main app chrome is present.
+   Login page has no .cd-layout / .sidebar, so it is left alone.
+   ---------------------------------------------------------- */
+body[data-banner-enabled]:has(.cd-layout) #app,
+body[data-banner-enabled]:has(.sidebar) #app {
   box-sizing: border-box;
   height: 100vh;
   padding-top: var(--dod-banner-height);
@@ -11,21 +15,19 @@ body[data-banner-enabled] #app {
   overflow: hidden;
 }
 
-/* Sidebar – keep what already works */
+/* ----------------------------------------------------------
+   Main application (authenticated) layout
+   ---------------------------------------------------------- */
 body[data-banner-enabled] .sidebar {
   top: var(--dod-banner-height) !important;
   height: calc(100vh - (2 * var(--dod-banner-height))) !important;
   max-height: calc(100vh - (2 * var(--dod-banner-height))) !important;
 }
 
-/* Only push the outer page top bar down; do not force heights
-   on the content column or it will clip the inner flex-top-bar */
 body[data-banner-enabled] .page__top-bar {
   margin-top: var(--dod-banner-height);
 }
 
-/* Let the real content area fill remaining space and scroll
-   without collapsing its children */
 body[data-banner-enabled] .page__content-wrapper {
   flex: 1 1 auto;
   min-height: 0;
@@ -33,12 +35,23 @@ body[data-banner-enabled] .page__content-wrapper {
   box-sizing: border-box;
 }
 
-/* Explicitly protect the action / tools bar so nothing
-   collapses or hides it */
 body[data-banner-enabled] .top-bar.flex-top-bar,
 body[data-banner-enabled] .flex-top-bar__actions,
 body[data-banner-enabled] .flex-top-bar__tools {
   flex-shrink: 0;
-  visibility: visible;
-  opacity: 1;
+}
+
+/* ----------------------------------------------------------
+   Login page – keep it visible between the banners
+   ---------------------------------------------------------- */
+body[data-banner-enabled] .login {
+  min-height: calc(100vh - (2 * var(--dod-banner-height)));
+  box-sizing: border-box;
+  padding-top: var(--dod-banner-height);
+  padding-bottom: var(--dod-banner-height);
+}
+
+/* Optional: if the login box is still too low / high, center it */
+body[data-banner-enabled] .login__box {
+  /* leave default centering; only add margin if needed */
 }
