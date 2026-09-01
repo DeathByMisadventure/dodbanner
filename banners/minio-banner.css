@@ -3,12 +3,43 @@
    ============================================================ */
 
 /*
- * MinIO uses height: 100vh on the body.
- * The shared banner.js adds padding-top equal to the banner
- * height, which otherwise makes the document taller than the
- * viewport and creates an unnecessary vertical scrollbar.
+ * Body is 100vh; account for BOTH banners so we don't get a
+ * double scrollbar or clipped chrome.
  */
-body {
-    height: calc(100vh - var(--dod-banner-height)) !important;
-    box-sizing: border-box;
+body[data-banner-enabled] {
+  height: calc(100vh - (2 * var(--dod-banner-height))) !important;
+  box-sizing: border-box;
+  padding-top: var(--dod-banner-height);
+  padding-bottom: var(--dod-banner-height);
+  overflow: hidden;
+}
+
+/* Sidebar column – keep full height inside the padded body,
+   and let the menu list scroll above the bottom banner */
+body[data-banner-enabled] .menuBox,
+body[data-banner-enabled] .menuContainer {
+  height: 100% !important;
+  max-height: 100% !important;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+/* The scrollable nav list (Documentation / License / sign-out live here) */
+body[data-banner-enabled] .menuItems {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto !important;
+  padding-bottom: 0.5rem; /* small gap above banner */
+}
+
+/* Main content pane */
+body[data-banner-enabled] .mainPage,
+body[data-banner-enabled] main {
+  height: 100%;
+  max-height: 100%;
+  box-sizing: border-box;
+  min-height: 0;
+  overflow: auto;
 }
