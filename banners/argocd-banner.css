@@ -22,6 +22,14 @@ body[data-banner-enabled] .sidebar {
   max-height: calc(100vh - (2 * var(--dod-banner-height))) !important;
 }
 
+/* Sliding panels (create app, details, etc.) */
+body[data-banner-enabled] .sliding-panel,
+body[data-banner-enabled] .sliding-panel__wrapper {
+  top: var(--dod-banner-height) !important;
+  height: calc(100vh - (2 * var(--dod-banner-height))) !important;
+  max-height: calc(100vh - (2 * var(--dod-banner-height))) !important;
+}
+
 /* Login page only – keep form between banners */
 body[data-banner-enabled] .login {
   min-height: calc(100vh - (2 * var(--dod-banner-height)));
