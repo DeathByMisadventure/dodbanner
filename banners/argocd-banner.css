@@ -23,8 +23,7 @@ body[data-banner-enabled] .sidebar {
 }
 
 /* Sliding panels (create app, details, etc.) */
-body[data-banner-enabled] .sliding-panel,
-body[data-banner-enabled] .sliding-panel__wrapper {
+body[data-banner-enabled] .sliding-panel {
   top: var(--dod-banner-height) !important;
   height: calc(100vh - (2 * var(--dod-banner-height))) !important;
   max-height: calc(100vh - (2 * var(--dod-banner-height))) !important;
