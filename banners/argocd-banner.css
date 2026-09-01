@@ -2,56 +2,26 @@
    ArgoCD Banner Layout
    ============================================================ */
 
-/* ----------------------------------------------------------
-   Shared: only pad #app when the main app chrome is present.
-   Login page has no .cd-layout / .sidebar, so it is left alone.
-   ---------------------------------------------------------- */
-body[data-banner-enabled]:has(.cd-layout) #app,
-body[data-banner-enabled]:has(.sidebar) #app {
-  box-sizing: border-box;
-  height: 100vh;
+/* Pad the body so banners sit outside the app chrome.
+   Do NOT force height/overflow on #app – that collapses content. */
+body[data-banner-enabled] {
   padding-top: var(--dod-banner-height);
   padding-bottom: var(--dod-banner-height);
-  overflow: hidden;
+  box-sizing: border-box;
 }
 
-/* ----------------------------------------------------------
-   Main application (authenticated) layout
-   ---------------------------------------------------------- */
+/* Sidebar is position:fixed / full-viewport – pull it into the
+   safe area between the banners */
 body[data-banner-enabled] .sidebar {
   top: var(--dod-banner-height) !important;
   height: calc(100vh - (2 * var(--dod-banner-height))) !important;
   max-height: calc(100vh - (2 * var(--dod-banner-height))) !important;
 }
 
-body[data-banner-enabled] .page__top-bar {
-  margin-top: var(--dod-banner-height);
-}
-
-body[data-banner-enabled] .page__content-wrapper {
-  flex: 1 1 auto;
-  min-height: 0;
-  overflow: auto;
-  box-sizing: border-box;
-}
-
-body[data-banner-enabled] .top-bar.flex-top-bar,
-body[data-banner-enabled] .flex-top-bar__actions,
-body[data-banner-enabled] .flex-top-bar__tools {
-  flex-shrink: 0;
-}
-
-/* ----------------------------------------------------------
-   Login page – keep it visible between the banners
-   ---------------------------------------------------------- */
+/* Login page only – keep form between banners */
 body[data-banner-enabled] .login {
   min-height: calc(100vh - (2 * var(--dod-banner-height)));
   box-sizing: border-box;
   padding-top: var(--dod-banner-height);
   padding-bottom: var(--dod-banner-height);
-}
-
-/* Optional: if the login box is still too low / high, center it */
-body[data-banner-enabled] .login__box {
-  /* leave default centering; only add margin if needed */
 }
