@@ -2,7 +2,6 @@
    ArgoCD Banner Layout
    ============================================================ */
 
-/* Attribute set by banner.js */
 body[data-banner-enabled] #app {
   box-sizing: border-box;
   height: 100vh;
@@ -11,14 +10,14 @@ body[data-banner-enabled] #app {
   overflow: hidden;
 }
 
-/* Sidebar – already working for you */
+/* Sidebar */
 body[data-banner-enabled] .sidebar {
   top: var(--dod-banner-height) !important;
   height: calc(100vh - (2 * var(--dod-banner-height))) !important;
   max-height: calc(100vh - (2 * var(--dod-banner-height))) !important;
 }
 
-/* Main layout column must fill the padded #app */
+/* Main layout column */
 body[data-banner-enabled] .cd-layout {
   height: 100%;
   box-sizing: border-box;
@@ -32,10 +31,15 @@ body[data-banner-enabled] .page {
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  min-height: 0;          /* critical for nested flex scroll */
+  min-height: 0;
 }
 
-/* Content area that actually scrolls */
+/* The piece that was still sitting under the top banner */
+body[data-banner-enabled] .page__top-bar {
+  margin-top: var(--dod-banner-height);
+}
+
+/* Scrolling content area */
 body[data-banner-enabled] .page__content-wrapper {
   flex: 1 1 auto;
   min-height: 0;
@@ -43,15 +47,12 @@ body[data-banner-enabled] .page__content-wrapper {
   box-sizing: border-box;
 }
 
-/* If any top bar is position:fixed / absolute it will still sit under the banner */
-body[data-banner-enabled] .page__top-bar,
-body[data-banner-enabled] .top-bar.flex-top-bar {
-  /* only needed if these are fixed; otherwise leave alone */
-}
-
-/* Sliding panels (they often use fixed positioning) */
+/* Optional: keep sliding panels inside the banner-safe area
+   (uncomment / adjust if a panel still goes under a banner) */
+/*
 body[data-banner-enabled] .sliding-panel {
-  /* if a panel is full-height fixed, shorten it the same way as the sidebar */
-  /* top: var(--dod-banner-height) !important; */
-  /* height: calc(100vh - (2 * var(--dod-banner-height))) !important; */
+  top: var(--dod-banner-height) !important;
+  height: calc(100vh - (2 * var(--dod-banner-height))) !important;
+  max-height: calc(100vh - (2 * var(--dod-banner-height))) !important;
 }
+*/
