@@ -2,34 +2,56 @@
    ArgoCD Banner Layout
    ============================================================ */
 
-/* Match the attribute that banner.js actually sets */
+/* Attribute set by banner.js */
 body[data-banner-enabled] #app {
   box-sizing: border-box;
   height: 100vh;
   padding-top: var(--dod-banner-height);
   padding-bottom: var(--dod-banner-height);
-  overflow: hidden; /* keep the 100vh layout from double-scrolling */
+  overflow: hidden;
 }
 
-/* Sidebar is full-height / fixed — pull it below the top banner
-   and shorten it so it doesn't sit under the bottom banner either */
+/* Sidebar – already working for you */
 body[data-banner-enabled] .sidebar {
   top: var(--dod-banner-height) !important;
   height: calc(100vh - (2 * var(--dod-banner-height))) !important;
   max-height: calc(100vh - (2 * var(--dod-banner-height))) !important;
 }
 
-/* Content area: make sure it respects the padded #app height */
-body[data-banner-enabled] .cd-layout,
-body[data-banner-enabled] .cd-layout__content,
-body[data-banner-enabled] .page-wrapper,
-body[data-banner-enabled] .sb-page-wrapper {
+/* Main layout column must fill the padded #app */
+body[data-banner-enabled] .cd-layout {
   height: 100%;
   box-sizing: border-box;
 }
 
-/* Optional: any fixed toolbars / bottom bars that might collide
-   with the bottom banner (adjust selectors if needed) */
-body[data-banner-enabled] .page--has-toolbar {
-  /* if a toolbar is position:fixed at the bottom, shift it up */
+body[data-banner-enabled] .cd-layout__content,
+body[data-banner-enabled] .page-wrapper,
+body[data-banner-enabled] .sb-page-wrapper,
+body[data-banner-enabled] .page {
+  height: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;          /* critical for nested flex scroll */
+}
+
+/* Content area that actually scrolls */
+body[data-banner-enabled] .page__content-wrapper {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+  box-sizing: border-box;
+}
+
+/* If any top bar is position:fixed / absolute it will still sit under the banner */
+body[data-banner-enabled] .page__top-bar,
+body[data-banner-enabled] .top-bar.flex-top-bar {
+  /* only needed if these are fixed; otherwise leave alone */
+}
+
+/* Sliding panels (they often use fixed positioning) */
+body[data-banner-enabled] .sliding-panel {
+  /* if a panel is full-height fixed, shorten it the same way as the sidebar */
+  /* top: var(--dod-banner-height) !important; */
+  /* height: calc(100vh - (2 * var(--dod-banner-height))) !important; */
 }
