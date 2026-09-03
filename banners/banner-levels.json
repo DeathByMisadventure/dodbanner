@@ -34,6 +34,12 @@
       "text": "TOP SECRET",
       "backgroundColor": "#FF8C00",
       "textColor": "#000000"
+    },
+    
+    "TOPSECRETSCI": {
+      "text": "TOP SECRET//SCI",
+      "backgroundColor": "#FCE83A",
+      "textColor": "#000000"
     }
   }
 }
