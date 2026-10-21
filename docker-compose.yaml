@@ -31,6 +31,7 @@ services:
 
       # Alertmanager serves its web UI from the root path.
       # Exclude static assets and other non-HTML resources.
+      # 
       INJECT_PATH_REGEX: "^/(?!.*\\.(js|css|png|jpg|jpeg|gif|svg|ico|woff2?|map|json)$).*"
 
       INJECT_BEFORE: "</head>"

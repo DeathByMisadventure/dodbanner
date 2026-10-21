@@ -394,6 +394,8 @@ Note: Kubernetes Only
 
 ### DBGate
 
+Note: DBGate uses both a JS and a CSS injection
+
 ```yaml
 - name: BACKEND_PORT
   value: "3000"
@@ -401,6 +403,8 @@ Note: Kubernetes Only
   value: "^/(?:login.html)?$"
 - name: INJECT_JS
   value: "dbgate-banner.js"
+- name: INJECT_CSS
+  value: "dbgate-banner.css"
 ```
 
 ### Grafana
@@ -464,7 +468,7 @@ Note: Kubernetes Only
 - name: BACKEND_PORT
   value: "9001"
 - name: INJECT_PATH_REGEX
-  value: "^/(?:)$"
+  value: "^/(?!api/|ws/|favicon\\.ico)(?!.*\\.(?:js|css|map|png|jpe?g|gif|svg|woff2?|ttf|ico|webp)$).*$"
 - name: INJECT_CSS
   value: "minio-banner.css"
 ```

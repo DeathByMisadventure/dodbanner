@@ -17,9 +17,19 @@ entrypoint_log() {
 : "${LISTEN_PORT:=9999}"
 : "${INJECT_PATH_REGEX:=^/(?:index.html)?$}"
 : "${INJECT_BEFORE:=</head>}"
+: "${PATH_PREFIX:=}"
 
-# Always inject the core banner files
-CORE_INJECTION='<script src="/banner/banner.js"></script><link rel="stylesheet" href="/banner/banner.css">'
+# Normalize PATH_PREFIX:
+#   ""           -> ""
+#   "dbgate"     -> "/dbgate"
+#   "/dbgate"    -> "/dbgate"
+#   "/dbgate/"   -> "/dbgate"
+#   "/"          -> ""
+PATH_PREFIX=$(echo "$PATH_PREFIX" | sed 's:/*$::; s:^/*:/:')
+[ "$PATH_PREFIX" = "/" ] && PATH_PREFIX=""
+
+# Always inject the core banner files (prefix-aware)
+CORE_INJECTION="<script src=\"${PATH_PREFIX}/banner/banner.js\"></script><link rel=\"stylesheet\" href=\"${PATH_PREFIX}/banner/banner.css\">"
 
 # ------------------------------------------------------------
 # Build EXTRA_INJECTION from INJECT_JS and INJECT_CSS
@@ -38,10 +48,11 @@ build_tags() {
         item=$(echo "$item" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
         [ -z "$item" ] && continue
 
-        # If the user only gave a filename, prefix with /banner/
+        # Absolute path from user → keep as-is (still apply PATH_PREFIX if not already)
+        # Relative filename → ${PATH_PREFIX}/banner/<file>
         case "$item" in
-            /*) path="$item" ;;
-            *)  path="/banner/$item" ;;
+            /*) path="${PATH_PREFIX}${item}" ;;
+            *)  path="${PATH_PREFIX}/banner/${item}" ;;
         esac
 
         if [ "$type" = "js" ]; then
