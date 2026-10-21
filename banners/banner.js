@@ -59,7 +59,7 @@
         .filter(Boolean);
       return {
         classification: (lines[0] || "UNAVAILABLE").toUpperCase(),
-        caveat: lines.slice(1).join(" // ")
+        caveat: lines.slice(1).map(l => l.replace(/^\/\/\s*/, "")).join(" // ")
       };
     } catch {
       return {
