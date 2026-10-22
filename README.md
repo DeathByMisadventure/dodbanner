@@ -201,7 +201,8 @@ Defines colors and display text for each classification:
     },
     "CONFIDENTIAL": { ... },
     "SECRET": { ... },
-    "TOPSECRET": { ... }
+    "TOPSECRET": { ... },
+    "TOPSECRETSCI": { ... }
   }
 }
 ```
